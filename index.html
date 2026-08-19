@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Pragati Sahayak Font Generator - Premium Stylish & Unicode Fonts Online</title>
+    
+    <!-- SEO & Metadata -->
+    <meta name="description" content="Generate stylish, unique, and copy-ready Unicode fonts instantly. 50+ aesthetic, bold, cursive, gaming, and mathematical font styles with AI Font Agent recommendations." />
+    <meta name="keywords" content="font generator, stylish font generator, fancy text generator, cool font generator, Unicode font generator, Instagram font generator, stylish text generator, fancy text, text generator, Pragati Sahayak" />
+    <meta name="author" content="Pragati Sahayak" />
+    <meta name="robots" content="index, follow" />
+    <link rel="canonical" href="https://pragatisahayak.github.io/font-generator/" />
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://pragatisahayak.github.io/font-generator/" />
+    <meta property="og:title" content="Pragati Sahayak Font Generator - Create Stylish Text in Seconds" />
+    <meta property="og:description" content="Transform plain text into 50+ beautiful Unicode styles, bold cursive fonts, gaming text, and social media bio fonts instantly." />
+    <meta property="og:image" content="./favicon.svg" />
+
+    <!-- Twitter / X -->
+    <meta property="twitter:card" content="summary_large_image" />
+    <meta property="twitter:url" content="https://pragatisahayak.github.io/font-generator/" />
+    <meta property="twitter:title" content="Pragati Sahayak Font Generator" />
+    <meta property="twitter:description" content="Transform plain text into 50+ beautiful Unicode styles instantly." />
+    <meta property="twitter:image" content="./favicon.svg" />
+
+    <!-- Favicon & PWA -->
+    <link rel="icon" type="image/svg+xml" href="./favicon.svg" />
+    <link rel="manifest" href="./manifest.json" />
+    <meta name="theme-color" content="#7c3aed" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+
+    <!-- Structured Data (JSON-LD) -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "WebApplication",
+        "name": "Pragati Sahayak Font Generator",
+        "url": "https://pragatisahayak.github.io/font-generator/",
+        "description": "Create stylish, unique and copy-ready Unicode fonts instantly. 50+ aesthetic, bold, cursive, gaming, and mathematical font styles.",
+        "applicationCategory": "UtilitiesApplication",
+        "operatingSystem": "All",
+        "offers": {
+          "@type": "Offer",
+          "price": "0",
+          "priceCurrency": "USD"
+        },
+        "author": {
+          "@type": "Organization",
+          "name": "Pragati Sahayak"
+        }
+      }
+    </script>
+  </head>
+  <body class="bg-dark-bg text-slate-100 font-sans antialiased min-h-screen selection:bg-brand-500/30 selection:text-brand-300">
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+    
+    <!-- PWA Service Worker Registration -->
+    <script>
+      if ('serviceWorker' in navigator && window.location.protocol.startsWith('http')) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('./sw.js').catch(err => {
+            console.log('SW registration error:', err);
+          });
+        });
+      }
+    </script>
+  </body>
+</html>

@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none">
+  <defs>
+    <linearGradient id="brandGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#8b5cf6" />
+      <stop offset="50%" stop-color="#6366f1" />
+      <stop offset="100%" stop-color="#3b82f6" />
+    </linearGradient>
+    <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="3" result="blur" />
+      <feComposite in="SourceGraphic" in2="blur" operator="over" />
+    </filter>
+  </defs>
+  <rect width="64" height="64" rx="16" fill="#090b10" />
+  <rect x="2" y="2" width="60" height="60" rx="14" stroke="url(#brandGrad)" stroke-width="2" stroke-opacity="0.4" />
+  <path d="M22 46V18H34C37.5 18 40.5 19.2 42.5 21.2C44.5 23.2 45.5 25.8 45.5 29C45.5 32.2 44.5 34.8 42.5 36.8C40.5 38.8 37.5 40 34 40H29V46H22ZM29 34H33.8C35.5 34 36.8 33.5 37.8 32.4C38.8 31.3 39.3 29.8 39.3 28C39.3 26.2 38.8 24.7 37.8 23.6C36.8 22.5 35.5 22 33.8 22H29V34Z" fill="url(#brandGrad)" filter="url(#glow)" />
+  <circle cx="46" cy="18" r="4" fill="#a855f7" />
+  <path d="M46 14L47.2 16.8L50 18L47.2 19.2L46 22L44.8 19.2L42 18L44.8 16.8L46 14Z" fill="#38bdf8" />
+</svg>
