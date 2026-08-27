@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://pragatisahayak.github.io/font-generator/sitemap.xml
+Sitemap: https://pragatisahayak.com/sitemap.xml

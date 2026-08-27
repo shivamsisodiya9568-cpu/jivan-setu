@@ -3,33 +3,32 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Pragati Sahayak Font Generator - Premium Stylish & Unicode Fonts Online</title>
+    <title>ReadTriangle – Turn Every Page Into a Voice</title>
     
-    <!-- SEO & Metadata -->
-    <meta name="description" content="Generate stylish, unique, and copy-ready Unicode fonts instantly. 50+ aesthetic, bold, cursive, gaming, and mathematical font styles with AI Font Agent recommendations." />
-    <meta name="keywords" content="font generator, stylish font generator, fancy text generator, cool font generator, Unicode font generator, Instagram font generator, stylish text generator, fancy text, text generator, Pragati Sahayak" />
-    <meta name="author" content="Pragati Sahayak" />
+    <!-- Primary SEO & Metadata -->
+    <meta name="description" content="Upload any PDF and listen to its contents as natural, human-like synthetic speech. Multilingual support for English, Hindi, Spanish, Japanese, Chinese, and more." />
+    <meta name="keywords" content="PDF to audio, PDF reader with voice, PDF text to speech, read PDF aloud, PDF audiobook, PDF voice reader, AI PDF reader, listen to PDF, PDF to speech, text to speech PDF" />
+    <meta name="author" content="ReadTriangle" />
     <meta name="robots" content="index, follow" />
-    <link rel="canonical" href="https://pragatisahayak.github.io/font-generator/" />
+    <link rel="canonical" href="https://readtriangle.com/" />
     
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website" />
-    <meta property="og:url" content="https://pragatisahayak.github.io/font-generator/" />
-    <meta property="og:title" content="Pragati Sahayak Font Generator - Create Stylish Text in Seconds" />
-    <meta property="og:description" content="Transform plain text into 50+ beautiful Unicode styles, bold cursive fonts, gaming text, and social media bio fonts instantly." />
-    <meta property="og:image" content="./favicon.svg" />
+    <meta property="og:url" content="https://readtriangle.com/" />
+    <meta property="og:title" content="ReadTriangle – Turn Every Page Into a Voice" />
+    <meta property="og:description" content="Premium multilingual PDF reading platform with natural, human-like neural TTS voices, synchronized sentence highlighting, and AI document assistance." />
+    <meta property="og:image" content="/og-image.png" />
 
     <!-- Twitter / X -->
     <meta property="twitter:card" content="summary_large_image" />
-    <meta property="twitter:url" content="https://pragatisahayak.github.io/font-generator/" />
-    <meta property="twitter:title" content="Pragati Sahayak Font Generator" />
-    <meta property="twitter:description" content="Transform plain text into 50+ beautiful Unicode styles instantly." />
-    <meta property="twitter:image" content="./favicon.svg" />
+    <meta property="twitter:url" content="https://readtriangle.com/" />
+    <meta property="twitter:title" content="ReadTriangle – Turn Every Page Into a Voice" />
+    <meta property="twitter:description" content="Listen to books, research papers, and study material aloud with natural AI voices in multiple languages." />
+    <meta property="twitter:image" content="/og-image.png" />
 
     <!-- Favicon & PWA -->
-    <link rel="icon" type="image/svg+xml" href="./favicon.svg" />
-    <link rel="manifest" href="./manifest.json" />
-    <meta name="theme-color" content="#7c3aed" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="theme-color" content="#4f46e5" />
     <meta name="mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
@@ -37,17 +36,18 @@
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&family=Inter:wght@300;400;500;600;700;800&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
 
     <!-- Structured Data (JSON-LD) -->
     <script type="application/ld+json">
       {
         "@context": "https://schema.org",
-        "@type": "WebApplication",
-        "name": "Pragati Sahayak Font Generator",
-        "url": "https://pragatisahayak.github.io/font-generator/",
-        "description": "Create stylish, unique and copy-ready Unicode fonts instantly. 50+ aesthetic, bold, cursive, gaming, and mathematical font styles.",
-        "applicationCategory": "UtilitiesApplication",
+        "@type": "SoftwareApplication",
+        "name": "ReadTriangle",
+        "url": "https://readtriangle.com/",
+        "headline": "Turn Every Page Into a Voice",
+        "description": "ReadTriangle is a premium multilingual PDF reading platform that allows users to upload readable PDFs and listen as natural, human-like neural speech.",
+        "applicationCategory": "EducationalApplication",
         "operatingSystem": "All",
         "offers": {
           "@type": "Offer",
@@ -56,24 +56,14 @@
         },
         "author": {
           "@type": "Organization",
-          "name": "Pragati Sahayak"
+          "name": "ReadTriangle",
+          "url": "https://readtriangle.com/"
         }
       }
     </script>
   </head>
-  <body class="bg-dark-bg text-slate-100 font-sans antialiased min-h-screen selection:bg-brand-500/30 selection:text-brand-300">
+  <body class="bg-slate-50 dark:bg-dark-bg text-slate-900 dark:text-slate-100 font-sans antialiased min-h-screen selection:bg-indigo-500/20 selection:text-indigo-600 dark:selection:text-indigo-300">
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
-    
-    <!-- PWA Service Worker Registration -->
-    <script>
-      if ('serviceWorker' in navigator && window.location.protocol.startsWith('http')) {
-        window.addEventListener('load', () => {
-          navigator.serviceWorker.register('./sw.js').catch(err => {
-            console.log('SW registration error:', err);
-          });
-        });
-      }
-    </script>
   </body>
 </html>

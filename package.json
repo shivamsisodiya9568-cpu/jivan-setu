@@ -1,23 +1,37 @@
 {
-  "name": "pragati-sahayak-font-generator",
+  "name": "readtriangle",
   "private": true,
   "version": "1.0.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "astro": "astro",
+    "astro:dev": "astro dev",
+    "astro:build": "astro build",
+    "astro:preview": "astro preview"
   },
   "dependencies": {
+    "@ai-sdk/google": "^4.0.54",
+    "@astrojs/react": "^6.0.4",
+    "ai": "^7.0.83",
+    "astro": "^7.2.8",
+    "canvas-confetti": "^1.9.4",
     "clsx": "^2.1.1",
     "framer-motion": "^11.18.2",
+    "jszip": "^3.10.1",
     "lucide-react": "^0.475.0",
+    "pdf-lib": "^1.17.1",
+    "pdfjs-dist": "^6.2.108",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-router-dom": "^6.29.0",
-    "tailwind-merge": "^2.6.0"
+    "tailwind-merge": "^2.6.0",
+    "tesseract.js": "^7.0.0"
   },
   "devDependencies": {
+    "@types/canvas-confetti": "^1.9.0",
     "@types/node": "^22.13.4",
     "@types/react": "^18.3.18",
     "@types/react-dom": "^18.3.5",

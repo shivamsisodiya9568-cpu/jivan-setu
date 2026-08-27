@@ -1,24 +1,17 @@
 {
-  "name": "Pragati Sahayak Font Generator",
-  "short_name": "Pragati Fonts",
-  "description": "Create stylish, unique and copy-ready Unicode fonts instantly. 50+ aesthetic, bold, cursive, gaming, and mathematical font styles with AI Font Agent recommendations.",
-  "start_url": "./",
-  "display": "standalone",
-  "background_color": "#090b10",
-  "theme_color": "#7c3aed",
-  "orientation": "portrait-primary",
+  "short_name": "Pragati PDF",
+  "name": "Pragati Sahayak PDF Generator",
   "icons": [
     {
-      "src": "./icons/icon-192.png",
-      "sizes": "192x192",
-      "type": "image/png",
-      "purpose": "any maskable"
-    },
-    {
-      "src": "./icons/icon-512.png",
-      "sizes": "512x512",
-      "type": "image/png",
-      "purpose": "any maskable"
+      "src": "./favicon.svg",
+      "type": "image/svg+xml",
+      "sizes": "512x512"
     }
-  ]
+  ],
+  "start_url": "./",
+  "background_color": "#090b10",
+  "theme_color": "#4f46e5",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "description": "Create, read, edit and listen to your documents simply."
 }

@@ -1,18 +1,31 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
   <defs>
     <linearGradient id="brandGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#8b5cf6" />
-      <stop offset="50%" stop-color="#6366f1" />
-      <stop offset="100%" stop-color="#3b82f6" />
+      <stop offset="0%" stop-color="#4f46e5" />
+      <stop offset="100%" stop-color="#7c3aed" />
     </linearGradient>
-    <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
-      <feGaussianBlur stdDeviation="3" result="blur" />
-      <feComposite in="SourceGraphic" in2="blur" operator="over" />
-    </filter>
+    <linearGradient id="sheetGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ffffff" />
+      <stop offset="100%" stop-color="#f1f5f9" />
+    </linearGradient>
   </defs>
-  <rect width="64" height="64" rx="16" fill="#090b10" />
-  <rect x="2" y="2" width="60" height="60" rx="14" stroke="url(#brandGrad)" stroke-width="2" stroke-opacity="0.4" />
-  <path d="M22 46V18H34C37.5 18 40.5 19.2 42.5 21.2C44.5 23.2 45.5 25.8 45.5 29C45.5 32.2 44.5 34.8 42.5 36.8C40.5 38.8 37.5 40 34 40H29V46H22ZM29 34H33.8C35.5 34 36.8 33.5 37.8 32.4C38.8 31.3 39.3 29.8 39.3 28C39.3 26.2 38.8 24.7 37.8 23.6C36.8 22.5 35.5 22 33.8 22H29V34Z" fill="url(#brandGrad)" filter="url(#glow)" />
-  <circle cx="46" cy="18" r="4" fill="#a855f7" />
-  <path d="M46 14L47.2 16.8L50 18L47.2 19.2L46 22L44.8 19.2L42 18L44.8 16.8L46 14Z" fill="#38bdf8" />
+  <!-- Background Shield/Squircle -->
+  <rect width="512" height="512" rx="128" fill="url(#brandGrad)" />
+  
+  <!-- Document Sheet -->
+  <rect x="128" y="108" width="256" height="308" rx="24" fill="url(#sheetGrad)" filter="drop-shadow(0 12px 24px rgba(0,0,0,0.25))" />
+  
+  <!-- Folded Corner / Accent -->
+  <path d="M304 108 L384 188 L304 188 Z" fill="#cbd5e1" />
+  <path d="M304 108 L384 188 L328 188 A 24 24 0 0 1 304 164 Z" fill="#94a3b8" />
+  
+  <!-- Text / Content Bars -->
+  <rect x="168" y="218" width="176" height="18" rx="9" fill="#4f46e5" />
+  <rect x="168" y="258" width="140" height="14" rx="7" fill="#64748b" />
+  <rect x="168" y="288" width="160" height="14" rx="7" fill="#94a3b8" />
+  <rect x="168" y="318" width="110" height="14" rx="7" fill="#94a3b8" />
+  
+  <!-- Audio / Voice Wave Symbol in Badge -->
+  <circle cx="340" cy="350" r="42" fill="#4f46e5" filter="drop-shadow(0 4px 10px rgba(79,70,229,0.4))" />
+  <path d="M332 334 L332 366 M340 326 L340 374 M348 334 L348 366 M324 342 L324 358 M356 342 L356 358" stroke="#ffffff" stroke-width="4" stroke-linecap="round" />
 </svg>

@@ -1,147 +1,99 @@
-# Pragati Sahayak Font Generator
+# ReadTriangle 📐
 
-> **Create stylish, unique, and copy-ready text in seconds.**  
-> A premium, modern, fast, smooth, and highly responsive Unicode font generation web platform with AI-style recommendations and 50+ aesthetic typography styles.
+> **"Turn Every Page Into a Voice."**  
+> *Your documents. Your PDFs. Your reading companion.*
 
-![Version](https://img.shields.io/badge/version-1.0.0-blue.svg)
-![License](https://img.shields.io/badge/license-MIT-green.svg)
-![Build](https://img.shields.io/badge/build-passing-emerald.svg)
-![PWA](https://img.shields.io/badge/PWA-Ready-purple.svg)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.7-blue?logo=typescript)](https://www.typescriptlang.org/)
+[![React](https://img.shields.io/badge/React-18.3-61dafb?logo=react)](https://reactjs.org/)
+[![Vite](https://img.shields.io/badge/Vite-6.1-646cff?logo=vite)](https://vitejs.dev/)
+[![Tailwind CSS](https://img.shields.io/badge/TailwindCSS-3.4-38b2ac?logo=tailwindcss)](https://tailwindcss.com/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
----
-
-## ✨ Features
-
-- **⚡ Instant Real-Time Generation**: Converts text into 50+ Unicode font styles instantly as you type without page reloads or API delays.
-- **🤖 Pragati Font Agent**: Intelligent recommendation assistant that understands context (gaming clan names, romantic names, Instagram bios, professional headlines) and suggests matching styles.
-- **🎨 50+ Hand-Crafted Unicode Styles**:
-  - **Mathematical**: Bold, Italic, Bold Italic, Sans-Serif, Double-Struck (Blackboard), Monospace
-  - **Calligraphy & Script**: Classic Cursive, Bold Flourish Calligraphy
-  - **Gothic & Medieval**: Fraktur Normal, Fraktur Bold, Old English, Dark Skull Gothic
-  - **Shapes & Enclosures**: Circled, Negative Circled Dark, Squared, Negative Squared Dark, Parenthesized, Kanji Brackets
-  - **Social & Aesthetic**: Small Caps, Starlight Small Caps, Vaporwave Fullwidth, Sparkles, Cherry Blossom, Heart Romance
-  - **Gaming & Clan**: Battle Swords Clan Tag, Cyberpunk Electric, Fire Blaze
-  - **Distortion & Tech**: Zalgo Corrupted Glitch, Hacker Leet Speak (1337), Morse Code, Strikethrough, Waves, Underlines
-- **🪄 Text Customizer**: 1-click aesthetic decorators, prefix/suffix additions, and case transformations (UPPERCASE, lowercase, Capitalize, aLtErNaTiNg).
-- **💖 Favorites System**: Save your favorite fonts locally with `localStorage` persistence.
-- **🕒 Generation History**: Automatic local history of recently generated text with instant reuse and clear options.
-- **🌓 Dark & Light Modes**: System preference auto-detection with smooth theme toggle and persistence.
-- **📱 100% Responsive & Accessible**: Flawless experience from 320px mobile screens to 4K ultra-wide monitors, respecting `prefers-reduced-motion` and WCAG accessibility standards.
-- **🔒 Privacy First & 100% Client-Side**: No backend servers or databases required. No user text is ever sent or stored externally.
-- **📲 Progressive Web App (PWA)**: Installable on Android, iOS, Windows, and macOS with offline caching.
+**ReadTriangle** is a premium multilingual PDF reading platform that allows users to upload readable PDFs and listen to their contents as natural, human-like synthetic speech.
 
 ---
 
-## 🚀 Quick Start (Run Locally)
+## 🌟 Core Features
 
-### 1. Prerequisites
-Make sure you have [Node.js](https://nodejs.org/) (version 18 or higher) installed.
+### 1. PDF Upload & Scanned OCR Engine
+- **Drag-and-Drop Uploader**: Upload books, study material, notes, articles, research documents, manuals, and e-books.
+- **Tesseract OCR Integration**: Automatically recognizes text from scanned image pages and converts it to speech.
+- **Graceful Invalid File Handling**: Robust error handling that prevents application crashes.
 
-### 2. Install Dependencies
+### 2. Built-In Multi-Mode PDF Reader
+- **Canvas PDF Viewer**: Built-in canvas renderer powered by PDF.js with page navigation, zoom (50% to 200%), fit page/width, fullscreen mode, and dark/light reading themes.
+- **Text Reader Mode**: Extracted text mode view with click-to-read sentence interaction.
+- **Audiobook Listening Mode**: Distraction-free listening interface with album cover art, live audio wave animation, and current spoken sentence focus.
+
+### 3. Natural Multilingual AI Voices
+- **Male & Female Voices**: Filterable by gender and tone (*Natural, Warm, Deep, Calm, Professional*).
+- **10+ Native Languages**: Hindi 🇮🇳, English 🇺🇸, Spanish 🇪🇸, Japanese 🇯🇵, Chinese 🇨🇳, French 🇫🇷, German 🇩🇪, Italian 🇮🇹, Portuguese 🇵🇹, Korean 🇰🇷, Russian 🇷🇺, Arabic 🇸🇦.
+- **Voice Preview**: Single-click "Preview Voice" available on every voice option.
+- **Automatic Language Detection**: Detects document script and language automatically.
+
+### 4. Audiobook-Style Voice Player
+- **Sticky Audio Control Bar**: Play, Pause, Resume, Stop, Previous/Next section, scrubbable progress bar (*"Reading page 27 of 312"*), volume, and speed selector (**0.5x, 0.75x, 1x, 1.25x, 1.5x, 1.75x, 2x**).
+- **Synchronized Sentence Highlighting**: Live sentence highlighting that auto-scrolls to the spoken sentence.
+- **Auto Page Synchronization**: Fulfills auto-page turning as speech reaches subsequent pages.
+- **Download Speech Audio**: Export generated speech audio as a downloadable audio file (`.wav`).
+
+### 5. Continue Reading & Text Cleanup
+- **Progress Persistence**: Saves reading position (*document ID, page, paragraph, sentence, voice, speed, timestamp*) in browser storage with a **"Continue Reading"** navbar dropdown.
+- **Automatic Text Cleanup**: Configurable toggles to strip page numbers, repeated headers/footers, and hyphenated word breaks.
+
+### 6. AI Document Companion & Ask Your PDF
+- **Ask Your PDF**: Interactive document Q&A with page citations.
+- **Document Summaries & Listen to Summary**: Generates concise summaries with a single-click **"Listen to Summary"** TTS button.
+- **Study Notes**: Key takeaways and vocabulary extraction.
+
+---
+
+## 🔒 Privacy & Architecture
+
+1. **Client-Side Processing**: PDF parsing, canvas rendering, Tesseract OCR, and Web Speech Synthesis run locally inside your browser sandbox.
+2. **Zero Telemetry**: No third-party tracking scripts or advertising trackers.
+3. **No Account Required**: Immediate access to all capabilities without registration.
+
+---
+
+## 🛠 Tech Stack
+
+- **Framework**: React 18 with TypeScript
+- **Build Tool**: Vite 6 & Astro JS
+- **Styling**: Tailwind CSS
+- **PDF Manipulation**: `pdf-lib` & `pdfjs-dist`
+- **OCR Engine**: `tesseract.js`
+- **AI Integration**: Vercel AI SDK (`ai` & `@ai-sdk/google`)
+- **Speech Engine**: Web Speech Synthesis API & Neural TTS
+
+---
+
+## 🚀 Quick Start
+
+### Prerequisites
+- Node.js 18.0 or higher
+- npm 9.0 or higher
+
+### 1. Clone Repository & Install Dependencies
 ```bash
+git clone https://github.com/shivamsisodiya9568-cpu/readtriangle.git
+cd readtriangle
 npm install
 ```
 
-### 3. Start Development Server
+### 2. Run Local Development Server
 ```bash
 npm run dev
 ```
-Open your browser and navigate to `http://localhost:5173`.
+Open your browser at `http://localhost:5173`.
 
-### 4. Build for Production
+### 3. Build for Production
 ```bash
 npm run build
-```
-The optimized production bundle will be generated in the `dist/` directory.
-
----
-
-## 🌐 Deploy to GitHub Pages
-
-This project is pre-configured with relative base paths (`./`) and HashRouter for zero-config GitHub Pages deployment.
-
-### Option 1: Direct GitHub Push + GitHub Actions (Recommended)
-1. Push this repository to GitHub:
-   ```bash
-   git init
-   git add .
-   git commit -m "Initial commit of Pragati Sahayak Font Generator"
-   git branch -M main
-   git remote add origin https://github.com/<YOUR_USERNAME>/<YOUR_REPO_NAME>.git
-   git push -u origin main
-   ```
-2. Go to your GitHub repository **Settings** → **Pages**.
-3. Under **Build and deployment**, select **GitHub Actions** (or deploy from the `dist` branch).
-
-### Option 2: Upload Pre-Built `dist/` Folder
-1. Run `npm run build`.
-2. Upload the files inside `dist/` to any static web host (GitHub Pages, Vercel, Netlify, Cloudflare Pages, Firebase Hosting).
-
----
-
-## 📂 Project Structure
-
-```text
-pragati-sahayak-font-generator/
-├── public/
-│   ├── favicon.svg          # Vector branding icon
-│   ├── manifest.json        # PWA Web App Manifest
-│   ├── robots.txt           # SEO robots directives
-│   ├── sitemap.xml          # XML sitemap
-│   └── sw.js                # Offline Service Worker
-├── src/
-│   ├── components/
-│   │   ├── FontCard.tsx             # Card with preview, copy, favorite, share
-│   │   ├── Footer.tsx               # Responsive SaaS footer
-│   │   ├── HistoryModal.tsx         # Local history modal
-│   │   ├── Navbar.tsx               # Responsive sticky navbar
-│   │   ├── TextCustomizerModal.tsx  # Decorators & case changer
-│   │   └── Toast.tsx                # Visual feedback alerts
-│   ├── context/
-│   │   └── ToastContext.tsx         # Toast notification provider
-│   ├── data/
-│   │   └── fontStyles.ts            # 50+ Unicode style definitions & categories
-│   ├── hooks/
-│   │   ├── useFavorites.ts          # localStorage favorites hook
-│   │   ├── useHistory.ts            # localStorage history hook
-│   │   └── useTheme.ts              # Dark/light theme hook
-│   ├── pages/
-│   │   ├── AboutPage.tsx            # About & Unicode architecture
-│   │   ├── AgentPage.tsx            # Pragati Font Agent AI assistant
-│   │   ├── ContactPage.tsx          # Contact & feedback form
-│   │   ├── FavoritesPage.tsx        # Saved fonts view & exporter
-│   │   ├── GeneratorPage.tsx        # Advanced font workspace
-│   │   ├── HomePage.tsx             # Hero & instant live generator
-│   │   ├── LibraryPage.tsx          # Complete styles catalog
-│   │   ├── PrivacyPage.tsx          # Privacy policy
-│   │   └── TermsPage.tsx            # Terms of use
-│   ├── services/
-│   │   └── aiAgentService.ts        # Intent parser & recommendation engine
-│   ├── types/
-│   │   └── index.ts                 # TypeScript definitions
-│   ├── utils/
-│   │   ├── clipboard.ts             # Robust clipboard copy utility
-│   │   ├── fontGenerators.ts        # Unicode character transformation math
-│   │   └── share.ts                 # Web Share API & URL generator
-│   ├── App.tsx                      # App router & layouts
-│   ├── index.css                    # Tailwind directives & glassmorphism
-│   └── main.tsx                     # React entry point
-├── index.html                       # HTML5 entry with SEO & OpenGraph tags
-├── package.json                     # Dependencies & scripts
-├── postcss.config.js                # PostCSS configuration
-├── tailwind.config.js               # Tailwind custom color palette & animations
-├── tsconfig.json                    # TypeScript compiler options
-└── vite.config.ts                   # Vite bundler configuration
 ```
 
 ---
 
 ## 📄 License
 
-Distributed under the MIT License. See `LICENSE` for more information.
-
----
-
-## 👑 Credits
-
-Developed with ❤️ for creators, gamers, and developers by **Pragati Sahayak**.
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.

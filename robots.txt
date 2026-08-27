@@ -2,4 +2,4 @@ User-agent: *
 Allow: /
 
 # Sitemap Location
-Sitemap: https://agra-discovery-platform.web.app/sitemap.xml
+Sitemap: https://readtriangle.com/sitemap.xml
