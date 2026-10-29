@@ -25,6 +25,7 @@ export const PdfCanvasViewer: React.FC = () => {
   // Render PDF Page onto Canvas
   useEffect(() => {
     let isCancelled = false;
+    let renderTask: any = null;
 
     const renderPage = async () => {
       if (!documentState.file || !canvasRef.current) return;
@@ -51,9 +52,12 @@ export const PdfCanvasViewer: React.FC = () => {
           canvas: canvas,
         };
 
-        await page.render(renderContext).promise;
-      } catch (err) {
-        console.warn('Canvas render error:', err);
+        renderTask = page.render(renderContext);
+        await renderTask.promise;
+      } catch (err: any) {
+        if (err?.name !== 'RenderingCancelledException') {
+          console.warn('Canvas render error:', err);
+        }
       }
     };
 
@@ -61,6 +65,11 @@ export const PdfCanvasViewer: React.FC = () => {
 
     return () => {
       isCancelled = true;
+      if (renderTask) {
+        try {
+          renderTask.cancel();
+        } catch {}
+      }
     };
   }, [documentState.file, playback.currentPageNumber, scale]);
 

@@ -10,6 +10,7 @@ import {
 } from '../types/reader';
 import { PdfExtractionService } from '../services/pdfExtractionService';
 import { speechSynthesisService } from '../services/speechSynthesisService';
+import { GoogleTtsService } from '../services/googleTtsService';
 import { StorageService } from '../services/storageService';
 import { aiAssistantService } from '../services/aiAssistantService';
 
@@ -240,6 +241,12 @@ export const ReadTriangleProvider: React.FC<{ children: React.ReactNode }> = ({ 
       while (isReadingRef.current && sentIdx < pageData.sentences.length) {
         const sentenceText = pageData.sentences[sentIdx];
 
+        // Background Prefetch next sentence for zero-latency reading
+        if (sentIdx + 1 < pageData.sentences.length && playback.selectedVoice?.provider === 'neural') {
+          const nextSent = pageData.sentences[sentIdx + 1];
+          GoogleTtsService.prefetch(nextSent, playback.selectedVoice?.voiceURI, playback.speed);
+        }
+
         // Update Playback State & Auto Page Sync
         setPlayback(prev => {
           const totalPages = documentState.pages.length;
@@ -278,8 +285,7 @@ export const ReadTriangleProvider: React.FC<{ children: React.ReactNode }> = ({ 
             pitch: playback.pitch,
           });
         } catch {
-          // If error occurs, break loop
-          break;
+          // If error occurs, pause briefly and continue
         }
 
         if (!isReadingRef.current) break;

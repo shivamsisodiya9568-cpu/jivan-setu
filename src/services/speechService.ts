@@ -1,9 +1,15 @@
+/**
+ * SpeechService - Unified client-side Web Speech & Voice playback helper
+ * Strictly English voices only.
+ */
+
 export interface SpeechVoiceOption {
-  voice: SpeechSynthesisVoice;
+  voice?: SpeechSynthesisVoice;
   name: string;
   lang: string;
   isDefault: boolean;
   isLocal: boolean;
+  provider?: 'neural' | 'browser';
 }
 
 export type SpeechState = 'idle' | 'playing' | 'paused' | 'stopped';
@@ -40,12 +46,13 @@ export class SpeechService {
 
   private initVoices() {
     if (!this.synth) return;
-    this.voices = this.synth.getVoices();
+    const all = this.synth.getVoices();
+    // Filter STRICTLY to English voices only
+    this.voices = all.filter(v => v.lang.toLowerCase().startsWith('en'));
+
     if (this.voices.length > 0 && !this.selectedVoice) {
-      // Try to find natural or high quality English voice or default
       const preferred =
         this.voices.find((v) => v.name.includes('Natural') || v.name.includes('Google') || v.name.includes('Samantha') || v.name.includes('Jenny') || v.name.includes('David')) ||
-        this.voices.find((v) => v.lang.startsWith('en')) ||
         this.voices[0];
       this.selectedVoice = preferred || null;
     }
@@ -54,7 +61,7 @@ export class SpeechService {
   public getVoices(): SpeechVoiceOption[] {
     if (!this.synth) return [];
     if (this.voices.length === 0) {
-      this.voices = this.synth.getVoices();
+      this.initVoices();
     }
     return this.voices.map((v) => ({
       voice: v,
@@ -62,6 +69,7 @@ export class SpeechService {
       lang: v.lang,
       isDefault: v.default,
       isLocal: v.localService,
+      provider: 'browser',
     }));
   }
 
@@ -74,10 +82,6 @@ export class SpeechService {
 
   public setRate(rate: number) {
     this.rate = Math.max(0.5, Math.min(2.0, rate));
-    if (this.state === 'playing' && this.currentUtterance) {
-      // Note: In standard Web Speech API, changing rate mid-utterance requires restart,
-      // handled by user or next paragraph.
-    }
   }
 
   public setPitch(pitch: number) {

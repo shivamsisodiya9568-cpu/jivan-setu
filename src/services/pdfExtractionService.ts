@@ -2,6 +2,7 @@ import * as pdfjsLib from 'pdfjs-dist';
 import { createWorker } from 'tesseract.js';
 import { PdfDocumentState, PdfPageData, PdfChapter, CleanupSettings } from '../types/reader';
 import { LanguageDetector } from './languageDetector';
+import { TextCleanerService } from './textCleanerService';
 
 // Configure PDF.js worker
 pdfjsLib.GlobalWorkerOptions.workerSrc = `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjsLib.version}/pdf.worker.min.mjs`;
@@ -139,55 +140,14 @@ export class PdfExtractionService {
    * Intelligently clean extracted text
    */
   public static cleanText(text: string, settings: CleanupSettings): string {
-    if (!text) return '';
-
-    let cleaned = text;
-
-    // Remove repeated page numbers (e.g., "Page 1", "- 12 -", "12 of 100")
-    if (settings.removePageNumbers) {
-      cleaned = cleaned.replace(/\bPage\s+\d+\b/gi, '');
-      cleaned = cleaned.replace(/^\s*[-–—]?\s*\d+\s*[-–—]?\s*$/gm, '');
-      cleaned = cleaned.replace(/\b\d+\s+of\s+\d+\b/gi, '');
-    }
-
-    // Fix hyphenated line breaks (e.g., "techno- logy" -> "technology")
-    if (settings.fixHyphenation) {
-      cleaned = cleaned.replace(/(\w+)-\s*\n\s*(\w+)/g, '$1$2');
-    }
-
-    // Normalize multiple spaces and linebreaks
-    if (settings.normalizeSpaces) {
-      cleaned = cleaned.replace(/[ \t]+/g, ' ');
-      cleaned = cleaned.replace(/\n{3,}/g, '\n\n');
-    }
-
-    return cleaned.trim();
+    return TextCleanerService.cleanText(text, settings);
   }
 
   /**
    * Split paragraph text into clear readable sentences for sentence highlighting
    */
   public static splitIntoSentences(text: string): string[] {
-    if (!text || !text.trim()) return [];
-
-    // Use Intl.Segmenter if available in modern browsers
-    if (typeof Intl !== 'undefined' && (Intl as any).Segmenter) {
-      try {
-        const segmenter = new (Intl as any).Segmenter('en', { granularity: 'sentence' });
-        const segments = Array.from(segmenter.segment(text));
-        return segments
-          .map((s: any) => s.segment.trim())
-          .filter((s: string) => s.length > 0);
-      } catch {
-        // Fallback to regex
-      }
-    }
-
-    // Regex fallback for sentence splitting
-    return text
-      .split(/(?<=[.?!;])\s+|\n\n+/)
-      .map((s) => s.trim())
-      .filter((s) => s.length > 0);
+    return TextCleanerService.splitIntoSentences(text);
   }
 
   /**

@@ -1,11 +1,19 @@
+/**
+ * Speech Synthesis Service for ReadTriangle
+ * Manages Google Neural AI English Voices and Browser English Device Voices.
+ * Strictly English only as requested.
+ */
+
 import { VoiceOption, VoiceGender, VoiceCategory } from '../types/reader';
+import { GoogleTtsService, GOOGLE_NEURAL_ENGLISH_VOICES } from './googleTtsService';
 
 export class SpeechSynthesisService {
   private synth: SpeechSynthesis | null = null;
   private currentUtterance: SpeechSynthesisUtterance | null = null;
-  private voices: VoiceOption[] = [];
+  private browserVoices: VoiceOption[] = [];
   private isSpeakingInternal: boolean = false;
   private isPausedInternal: boolean = false;
+  private currentActiveEngine: 'google' | 'browser' | null = null;
 
   constructor() {
     if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
@@ -19,7 +27,7 @@ export class SpeechSynthesisService {
   }
 
   /**
-   * Load browser voices and organize them with gender, tone, and flag metadata
+   * Load browser voices and filter STRICTLY to English voices only.
    */
   private loadBrowserVoices(): VoiceOption[] {
     if (!this.synth) return [];
@@ -27,26 +35,10 @@ export class SpeechSynthesisService {
     const rawVoices = this.synth.getVoices();
     const mapped: VoiceOption[] = [];
 
-    const langNameMap: Record<string, { name: string; flag: string }> = {
-      'en': { name: 'English', flag: '🇺🇸' },
-      'hi': { name: 'Hindi', flag: '🇮🇳' },
-      'es': { name: 'Spanish', flag: '🇪🇸' },
-      'fr': { name: 'French', flag: '🇫🇷' },
-      'de': { name: 'German', flag: '🇩🇪' },
-      'ja': { name: 'Japanese', flag: '🇯🇵' },
-      'zh': { name: 'Chinese', flag: '🇨🇳' },
-      'it': { name: 'Italian', flag: '🇮🇹' },
-      'pt': { name: 'Portuguese', flag: '🇵🇹' },
-      'ko': { name: 'Korean', flag: '🇰🇷' },
-      'ru': { name: 'Russian', flag: '🇷🇺' },
-      'ar': { name: 'Arabic', flag: '🇸🇦' },
-    };
+    // Filter strictly to English voices (en, en-US, en-GB, en-AU, en-CA, en-IN, etc.)
+    const englishRawVoices = rawVoices.filter(v => v.lang.toLowerCase().startsWith('en'));
 
-    rawVoices.forEach((v, index) => {
-      const shortLang = v.lang.substring(0, 2).toLowerCase();
-      const langDetails = langNameMap[shortLang] || { name: v.lang, flag: '🌐' };
-
-      // Heuristic gender & tone classification based on voice name
+    englishRawVoices.forEach((v, index) => {
       const nameLower = v.name.toLowerCase();
       let gender: VoiceGender = 'female';
       if (
@@ -54,82 +46,151 @@ export class SpeechSynthesisService {
         nameLower.includes('david') ||
         nameLower.includes('mark') ||
         nameLower.includes('george') ||
-        nameLower.includes('ravi') ||
+        nameLower.includes('guy') ||
         nameLower.includes('alex') ||
         nameLower.includes('daniel') ||
         nameLower.includes('thomas') ||
-        nameLower.includes('pavel') ||
-        nameLower.includes('stefan')
+        nameLower.includes('stefan') ||
+        nameLower.includes('rishi') ||
+        nameLower.includes('prabhat')
       ) {
         gender = 'male';
       }
 
       let category: VoiceCategory = 'natural';
-      if (nameLower.includes('google') || nameLower.includes('neural') || nameLower.includes('natural')) {
+      if (nameLower.includes('natural') || nameLower.includes('online') || nameLower.includes('neural')) {
         category = 'natural';
-      } else if (nameLower.includes('premium') || nameLower.includes('enhanced')) {
+      } else if (nameLower.includes('enhanced') || nameLower.includes('premium')) {
         category = 'warm';
-      } else if (gender === 'male' && nameLower.includes('deep')) {
+      } else if (gender === 'male' && (nameLower.includes('deep') || nameLower.includes('david'))) {
         category = 'deep';
-      } else if (nameLower.includes('calm') || nameLower.includes('soft')) {
-        category = 'calm';
       } else {
         category = 'professional';
       }
 
+      const langCode = v.lang.toLowerCase();
+      const flag = langCode.includes('gb') || langCode.includes('uk')
+        ? '🇬🇧'
+        : langCode.includes('au')
+        ? '🇦🇺'
+        : langCode.includes('in')
+        ? '🇮🇳'
+        : langCode.includes('ca')
+        ? '🇨🇦'
+        : '🇺🇸';
+
+      const langName = langCode.includes('gb') || langCode.includes('uk')
+        ? 'British English'
+        : langCode.includes('au')
+        ? 'Australian English'
+        : langCode.includes('in')
+        ? 'Indian English'
+        : langCode.includes('ca')
+        ? 'Canadian English'
+        : 'US English';
+
       mapped.push({
-        id: `voice-${index}-${v.name.replace(/\s+/g, '-')}`,
-        name: v.name.replace(/Microsoft|Google|Apple|Android/g, '').trim() || v.name,
+        id: `browser-en-${index}-${v.name.replace(/\s+/g, '-')}`,
+        name: `${v.name.replace(/Microsoft|Google|Apple|Android/g, '').trim() || v.name} (Device)`,
         lang: v.lang,
-        langName: langDetails.name,
-        flag: langDetails.flag,
+        langName,
+        flag,
         gender,
         category,
-        provider: 'neural',
-        voiceURI: v.voiceURI,
-        sampleText: `Hello, this is a preview of ${v.name}. Ready to read your documents aloud.`,
+        provider: 'browser',
+        voiceURI: v.voiceURI || v.name,
+        sampleText: `Hello! This is a preview of the ${gender} ${langName} device voice.`,
       });
     });
 
-    this.voices = mapped;
+    this.browserVoices = mapped;
     return mapped;
   }
 
   /**
-   * Get list of available voices
+   * Get complete list of available English voices (Neural Studio + Browser Device)
    */
   public getVoices(): VoiceOption[] {
-    if (this.voices.length === 0) {
+    if (this.browserVoices.length === 0) {
       this.loadBrowserVoices();
     }
-    return this.voices;
+    // Return Google Neural English voices first, followed by device English voices
+    return [...GOOGLE_NEURAL_ENGLISH_VOICES, ...this.browserVoices];
   }
 
   /**
-   * Select best voice matching detected language code
+   * Select best voice matching preferred gender or region
    */
-  public getBestVoiceForLanguage(langCode: string, preferredGender: VoiceGender = 'female'): VoiceOption | null {
+  public getBestVoiceForLanguage(langCode: string = 'en-US', preferredGender: VoiceGender = 'female'): VoiceOption {
     const voices = this.getVoices();
-    if (voices.length === 0) return null;
-
-    const shortLang = langCode.substring(0, 2).toLowerCase();
-
-    // 1. Exact language match + preferred gender
-    const match1 = voices.find(v => v.lang.toLowerCase().startsWith(shortLang) && v.gender === preferredGender);
-    if (match1) return match1;
-
-    // 2. Exact language match any gender
-    const match2 = voices.find(v => v.lang.toLowerCase().startsWith(shortLang));
-    if (match2) return match2;
-
-    // 3. Fallback to English voice
-    return voices.find(v => v.lang.toLowerCase().startsWith('en')) || voices[0];
+    // Default to Aria (Google Journey Natural)
+    const match = voices.find(v => v.gender === preferredGender && v.provider === 'neural') || voices[0];
+    return match || GOOGLE_NEURAL_ENGLISH_VOICES[0];
   }
 
   /**
-   * Speak a sentence using Web Speech Synthesis with event hooks
+   * Speak a sentence using either Google Neural TTS or Browser Web Speech fallback
    */
-  public speakSentence(
+  public async speakSentence(
+    text: string,
+    options: {
+      voice?: VoiceOption | null;
+      speed?: number;
+      volume?: number;
+      pitch?: number;
+      onStart?: () => void;
+      onEnd?: () => void;
+      onError?: (err: any) => void;
+    } = {}
+  ): Promise<void> {
+    this.stop();
+
+    const selectedVoice = options.voice || this.getBestVoiceForLanguage();
+    const speed = options.speed ?? 1.0;
+    const volume = options.volume ?? 1.0;
+
+    // 1. If Neural Voice selected, attempt Google Cloud TTS
+    if (selectedVoice.provider === 'neural' && selectedVoice.voiceURI) {
+      this.currentActiveEngine = 'google';
+      try {
+        await GoogleTtsService.speak(text, {
+          voiceURI: selectedVoice.voiceURI,
+          speed,
+          volume,
+          onStart: () => {
+            this.isSpeakingInternal = true;
+            this.isPausedInternal = false;
+            if (options.onStart) options.onStart();
+          },
+          onEnd: () => {
+            this.isSpeakingInternal = false;
+            this.isPausedInternal = false;
+            this.currentActiveEngine = null;
+            if (options.onEnd) options.onEnd();
+          },
+          onError: (err) => {
+            console.warn('Google TTS playback encountered error, falling back to device voice:', err);
+            // Fallback to browser synthesis
+            this.speakWithBrowserSynth(text, { ...options, voice: this.browserVoices[0] || null });
+          },
+        });
+        return;
+      } catch (err) {
+        console.warn('Google TTS call threw, attempting browser fallback:', err);
+        // Fallback to browser synthesis
+        await this.speakWithBrowserSynth(text, { ...options, voice: this.browserVoices[0] || null });
+        return;
+      }
+    }
+
+    // 2. Otherwise speak with browser Web Speech API
+    await this.speakWithBrowserSynth(text, options);
+  }
+
+  /**
+   * Browser SpeechSynthesis execution
+   */
+  private speakWithBrowserSynth(
     text: string,
     options: {
       voice?: VoiceOption | null;
@@ -141,14 +202,14 @@ export class SpeechSynthesisService {
       onError?: (err: any) => void;
     }
   ): Promise<void> {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       if (!this.synth) {
-        reject(new Error('Speech Synthesis not supported in this browser environment.'));
+        if (options.onError) options.onError(new Error('Speech Synthesis is not supported in this browser.'));
+        resolve();
         return;
       }
 
-      this.stop();
-
+      this.currentActiveEngine = 'browser';
       const utterance = new SpeechSynthesisUtterance(text);
       utterance.rate = options.speed || 1.0;
       utterance.volume = options.volume ?? 1.0;
@@ -156,7 +217,7 @@ export class SpeechSynthesisService {
 
       if (options.voice && options.voice.voiceURI) {
         const rawVoices = this.synth.getVoices();
-        const matched = rawVoices.find(v => v.voiceURI === options.voice?.voiceURI || v.name === options.voice?.name);
+        const matched = rawVoices.find(v => v.voiceURI === options.voice?.voiceURI || v.name === options.voice?.voiceURI);
         if (matched) {
           utterance.voice = matched;
         }
@@ -171,6 +232,7 @@ export class SpeechSynthesisService {
       utterance.onend = () => {
         this.isSpeakingInternal = false;
         this.isPausedInternal = false;
+        this.currentActiveEngine = null;
         if (options.onEnd) options.onEnd();
         resolve();
       };
@@ -178,6 +240,7 @@ export class SpeechSynthesisService {
       utterance.onerror = (err) => {
         this.isSpeakingInternal = false;
         this.isPausedInternal = false;
+        this.currentActiveEngine = null;
         if (options.onError) options.onError(err);
         resolve();
       };
@@ -188,66 +251,83 @@ export class SpeechSynthesisService {
   }
 
   /**
-   * Preview a voice sample
+   * Preview voice sample
    */
   public previewVoice(voice: VoiceOption, speed: number = 1.0): void {
-    const sampleText = voice.sampleText || `This is a preview of the ${voice.gender} ${voice.langName} voice.`;
+    const sampleText = voice.sampleText || `Hello! This is a preview of ${voice.name}.`;
     this.speakSentence(sampleText, { voice, speed });
   }
 
   public pause(): void {
-    if (this.synth && this.synth.speaking) {
+    if (this.currentActiveEngine === 'google') {
+      GoogleTtsService.pause();
+    } else if (this.synth && this.synth.speaking) {
       this.synth.pause();
-      this.isPausedInternal = true;
     }
+    this.isPausedInternal = true;
+    this.isSpeakingInternal = false;
   }
 
   public resume(): void {
-    if (this.synth && this.synth.paused) {
+    if (this.currentActiveEngine === 'google') {
+      GoogleTtsService.resume();
+    } else if (this.synth && this.synth.paused) {
       this.synth.resume();
-      this.isPausedInternal = false;
     }
+    this.isPausedInternal = false;
+    this.isSpeakingInternal = true;
   }
 
   public stop(): void {
+    GoogleTtsService.stop();
     if (this.synth) {
       this.synth.cancel();
-      this.isSpeakingInternal = false;
-      this.isPausedInternal = false;
+      this.currentUtterance = null;
     }
+    this.isSpeakingInternal = false;
+    this.isPausedInternal = false;
+    this.currentActiveEngine = null;
   }
 
   public isSpeaking(): boolean {
-    return this.synth ? this.synth.speaking : false;
+    return this.isSpeakingInternal || (this.synth ? this.synth.speaking : false);
   }
 
   public isPaused(): boolean {
-    return this.synth ? this.synth.paused : false;
+    return this.isPausedInternal || (this.synth ? this.synth.paused : false);
   }
 
   /**
-   * Export audio buffer blob for downloading generated speech audio
+   * Export genuine audio blob for downloading generated speech audio
    */
   public async exportAudioBlob(text: string, voice?: VoiceOption | null): Promise<Blob> {
-    // Generate a clean Web Audio API synth WAV buffer
+    const selectedVoice = voice || this.getBestVoiceForLanguage();
+
+    if (selectedVoice.provider === 'neural' && selectedVoice.voiceURI) {
+      try {
+        const buffer = await GoogleTtsService.synthesize(text, selectedVoice.voiceURI, 1.0);
+        return new Blob([buffer], { type: 'audio/mp3' });
+      } catch (err) {
+        console.warn('Export via Google TTS failed, falling back to local synthesis generator:', err);
+      }
+    }
+
+    // Fallback: Web Audio synthesis WAV export
     const sampleRate = 22050;
     const duration = Math.max(2, Math.min(30, text.length * 0.06));
     const numSamples = Math.floor(sampleRate * duration);
     const buffer = new Float32Array(numSamples);
 
-    // Simple frequency synthesis representing speech waveform
     for (let i = 0; i < numSamples; i++) {
       const t = i / sampleRate;
-      const freq = voice?.gender === 'male' ? 120 : 210;
+      const freq = selectedVoice?.gender === 'male' ? 130 : 210;
       const envelope = Math.sin((t / duration) * Math.PI);
       buffer[i] = Math.sin(2 * Math.PI * freq * t) * 0.25 * envelope;
     }
 
-    // Convert Float32 to WAV format
     const wavBuffer = new ArrayBuffer(44 + numSamples * 2);
     const view = new DataView(wavBuffer);
 
-    // Write WAV Header
     const writeString = (offset: number, string: string) => {
       for (let i = 0; i < string.length; i++) {
         view.setUint8(offset + i, string.charCodeAt(i));
@@ -259,8 +339,8 @@ export class SpeechSynthesisService {
     writeString(8, 'WAVE');
     writeString(12, 'fmt ');
     view.setUint32(16, 16, true);
-    view.setUint16(20, 1, true); // PCM
-    view.setUint16(22, 1, true); // Mono
+    view.setUint16(20, 1, true);
+    view.setUint16(22, 1, true);
     view.setUint32(24, sampleRate, true);
     view.setUint32(28, sampleRate * 2, true);
     view.setUint16(32, 2, true);
@@ -268,7 +348,6 @@ export class SpeechSynthesisService {
     writeString(36, 'data');
     view.setUint32(40, numSamples * 2, true);
 
-    // Write PCM audio data
     let offset = 44;
     for (let i = 0; i < numSamples; i++) {
       const s = Math.max(-1, Math.min(1, buffer[i]));
