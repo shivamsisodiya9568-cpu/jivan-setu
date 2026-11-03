@@ -1,99 +1,138 @@
-# ReadTriangle 📐
+# JIVAN SETU (जीवन सेतु)
+> **"Bridging the Gap Between Emergencies and Timely Medical Response."**
 
-> **"Turn Every Page Into a Voice."**  
-> *Your documents. Your PDFs. Your reading companion.*
-
-[![TypeScript](https://img.shields.io/badge/TypeScript-5.7-blue?logo=typescript)](https://www.typescriptlang.org/)
-[![React](https://img.shields.io/badge/React-18.3-61dafb?logo=react)](https://reactjs.org/)
-[![Vite](https://img.shields.io/badge/Vite-6.1-646cff?logo=vite)](https://vitejs.dev/)
-[![Tailwind CSS](https://img.shields.io/badge/TailwindCSS-3.4-38b2ac?logo=tailwindcss)](https://tailwindcss.com/)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-
-**ReadTriangle** is a premium multilingual PDF reading platform that allows users to upload readable PDFs and listen to their contents as natural, human-like synthetic speech.
+[![React](https://img.shields.io/badge/React-18-blue.svg)](https://react.dev/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.7-blue.svg)](https://www.typescriptlang.org/)
+[![Tailwind CSS](https://img.shields.io/badge/TailwindCSS-3.4-38bdf8.svg)](https://tailwindcss.com/)
+[![Leaflet](https://img.shields.io/badge/Leaflet-OpenStreetMap-199900.svg)](https://leafletjs.com/)
+[![Status](https://img.shields.io/badge/Academic%20Project-B.Tech%20Capstone-red.svg)]()
 
 ---
 
-## 🌟 Core Features
+## 📌 Project Overview
+**JIVAN SETU** is a modern, responsive, smart emergency medical response and ambulance coordination platform designed to address the **"Golden Hour"** bottleneck in pre-hospital trauma care. 
 
-### 1. PDF Upload & Scanned OCR Engine
-- **Drag-and-Drop Uploader**: Upload books, study material, notes, articles, research documents, manuals, and e-books.
-- **Tesseract OCR Integration**: Automatically recognizes text from scanned image pages and converts it to speech.
-- **Graceful Invalid File Handling**: Robust error handling that prevents application crashes.
-
-### 2. Built-In Multi-Mode PDF Reader
-- **Canvas PDF Viewer**: Built-in canvas renderer powered by PDF.js with page navigation, zoom (50% to 200%), fit page/width, fullscreen mode, and dark/light reading themes.
-- **Text Reader Mode**: Extracted text mode view with click-to-read sentence interaction.
-- **Audiobook Listening Mode**: Distraction-free listening interface with album cover art, live audio wave animation, and current spoken sentence focus.
-
-### 3. Natural Multilingual AI Voices
-- **Male & Female Voices**: Filterable by gender and tone (*Natural, Warm, Deep, Calm, Professional*).
-- **10+ Native Languages**: Hindi 🇮🇳, English 🇺🇸, Spanish 🇪🇸, Japanese 🇯🇵, Chinese 🇨🇳, French 🇫🇷, German 🇩🇪, Italian 🇮🇹, Portuguese 🇵🇹, Korean 🇰🇷, Russian 🇷🇺, Arabic 🇸🇦.
-- **Voice Preview**: Single-click "Preview Voice" available on every voice option.
-- **Automatic Language Detection**: Detects document script and language automatically.
-
-### 4. Audiobook-Style Voice Player
-- **Sticky Audio Control Bar**: Play, Pause, Resume, Stop, Previous/Next section, scrubbable progress bar (*"Reading page 27 of 312"*), volume, and speed selector (**0.5x, 0.75x, 1x, 1.25x, 1.5x, 1.75x, 2x**).
-- **Synchronized Sentence Highlighting**: Live sentence highlighting that auto-scrolls to the spoken sentence.
-- **Auto Page Synchronization**: Fulfills auto-page turning as speech reaches subsequent pages.
-- **Download Speech Audio**: Export generated speech audio as a downloadable audio file (`.wav`).
-
-### 5. Continue Reading & Text Cleanup
-- **Progress Persistence**: Saves reading position (*document ID, page, paragraph, sentence, voice, speed, timestamp*) in browser storage with a **"Continue Reading"** navbar dropdown.
-- **Automatic Text Cleanup**: Configurable toggles to strip page numbers, repeated headers/footers, and hyphenated word breaks.
-
-### 6. AI Document Companion & Ask Your PDF
-- **Ask Your PDF**: Interactive document Q&A with page citations.
-- **Document Summaries & Listen to Summary**: Generates concise summaries with a single-click **"Listen to Summary"** TTS button.
-- **Study Notes**: Key takeaways and vocabulary extraction.
+In high-stress medical crises, traditional telephone dispatches suffer from severe location ambiguity, zero advance clinical data, and unprepared hospital emergency departments. **JIVAN SETU** connects four key stakeholders into a unified digital loop:
+1. **Accident Victims & Bystanders**
+2. **108 EMS Ambulance Dispatch & Paramedic Crews**
+3. **Hospital Emergency Trauma Departments (ED / ER)**
+4. **Central State Emergency Command Dispatchers**
 
 ---
 
-## 🔒 Privacy & Architecture
+## 🚀 Key Features & Capabilities
 
-1. **Client-Side Processing**: PDF parsing, canvas rendering, Tesseract OCR, and Web Speech Synthesis run locally inside your browser sandbox.
-2. **Zero Telemetry**: No third-party tracking scripts or advertising trackers.
-3. **No Account Required**: Immediate access to all capabilities without registration.
+### 1. Smart Emergency Incident Questionnaire
+- Intuitive, mobile-first responsive reporting form completable in under 45 seconds.
+- Rapid capture of caller info, incident category, consciousness (**AVPU Scale**), respiration pattern, active arterial bleeding, and suspected anatomical injuries.
+- **Voice-to-Text Dictation** using Web Speech API (supports Hindi and English speech).
+- **GPS Auto-detection & Interactive Map**: Automatically locks browser coordinates with click-and-drag pin correction on OpenStreetMap.
+
+### 2. Smart Patient Priority Matrix (Preliminary Triage)
+- Deterministic clinical assessment engine categorizing incidents into:
+  - 🔴 **RED (Critical)**: Immediate resuscitation & Advanced Life Support (ALS) dispatched.
+  - 🟡 **YELLOW (Urgent)**: Prompt clinical stabilization and immobilization.
+  - 🟢 **GREEN (Lower Urgency)**: Stable vitals; standard evaluation.
+- **Safety Safeguard**: Never automatically downgrades a patient on missing questionnaire answers. Clearly identified as preliminary informational organization.
+
+### 3. AI Emergency Assistant with SBAR Formulation
+- Conversational emergency triage interface capable of organizing unstructured descriptions.
+- Automatically constructs standardized **SBAR** (*Situation, Background, Assessment, Recommendation*) clinical handover notes.
+- **100% Offline Medical Intelligence Fallback**: Built-in deterministic rules engine operates instantly without requiring external paid API keys.
+- Optional Google Gemini API integration when `VITE_GEMINI_API_KEY` is supplied in `.env`.
+
+### 4. Ambulance Personnel Console (108 EMS)
+- Live incoming dispatch queue with vehicle telemetry (Call Sign: Eagle-1 ALS).
+- Interactive status transitions: `Received` ➔ `Accepted` ➔ `En Route` ➔ `Arrived at Scene` ➔ `Patient Transporting` ➔ `Completed`.
+- **Ambulance Equipment Recommender**: Intelligent checklist tailoring gear (Defibrillator, Arterial Tourniquet, Cervical Collar, Ventilator) to reported symptoms.
+- One-click trigger for destination hospital pre-alerts.
+
+### 5. Hospital ER Trauma Bay Pre-Alert Console
+- Eliminates emergency room admission surprise by providing advance notification.
+- Real-time ETA countdown, inbound ambulance telemetry, and clinical SBAR handover summary.
+- **Trauma Bay Readiness Checklist**: Allows charge nurses to confirm bay clearance, cross-match blood reserves (O-negative), and alert on-call surgeons.
+
+### 6. Central Command & Coordination Hub (Admin)
+- System-wide analytics: total incidents, priority distribution, ambulance fleet utilization, and hospital bed counts.
+- Filterable, searchable emergency incident database with one-click **CSV Export**.
+
+### 7. Interactive OpenStreetMap Route Optimization
+- Embedded Leaflet map rendering the three-point corridor:
+  `Ambulance Base Station` ➔ `Incident Ground` ➔ `Receiving Trauma ER`.
+- Route distance (km), estimated travel times (mins), and planned smart-city green corridor integration notes.
+
+### 8. Bilingual First-Aid Guidance with Voice Playback
+- Medically reviewed emergency protocols for: CPR, Choking (Heimlich), Severe Bleeding & Tourniquets, Burns, Stroke (B.E. F.A.S.T.), Fractures, and Snakebites.
+- Instant language toggle (**English & हिंदी**).
+- Hands-free text-to-speech audio readout.
 
 ---
 
-## 🛠 Tech Stack
+## 🎬 9-Step Faculty Evaluation Demonstration Flow
+JIVAN SETU includes a built-in interactive presentation wizard at `/demo` to help you present the project to your college professors:
 
-- **Framework**: React 18 with TypeScript
-- **Build Tool**: Vite 6 & Astro JS
-- **Styling**: Tailwind CSS
-- **PDF Manipulation**: `pdf-lib` & `pdfjs-dist`
-- **OCR Engine**: `tesseract.js`
-- **AI Integration**: Vercel AI SDK (`ai` & `@ai-sdk/google`)
-- **Speech Engine**: Web Speech Synthesis API & Neural TTS
+| Step | Persona | Action Demonstrated |
+| :---: | :--- | :--- |
+| **1** | Bystander | Submits incident report near Safdarjung Flyover with head injury & bleeding. |
+| **2** | Gateway | Generates unique Incident ID (`JS-2026-9041`) and writes to local database. |
+| **3** | Triage Engine | Classifies patient as **RED (Critical)** and recommends ALS Defibrillator & Tourniquet. |
+| **4** | Ambulance Crew | Eagle-1 ALS unit receives the dispatch telemetry on vehicle console. |
+| **5** | Paramedic | Reviews critical warning signs and accepts the assignment. |
+| **6** | Driver | Advances status to **En Route**; live route countdown starts (ETA ~ 4 mins). |
+| **7** | Hospital ER | AIIMS Apex Trauma console sounds advance pre-alert chime with SBAR summary. |
+| **8** | ER Nurse | Acknowledges alert, clears Trauma Bay 1, and reserves 2 units O-negative blood. |
+| **9** | Paramedic & ER | Stretcher arrives at hospital; handover is confirmed and case marked completed. |
 
 ---
 
-## 🚀 Quick Start
+## 🛠️ Technology Stack
+- **Frontend Framework**: React 18 with TypeScript 5.7
+- **Bundler & Dev Server**: Vite 6.1
+- **Styling**: Tailwind CSS 3.4 with custom Healthcare Navy & Emergency Red palette
+- **Icons**: Lucide React
+- **Geospatial & Mapping**: Leaflet 1.9 & OpenStreetMap (No proprietary billing or API keys required)
+- **Voice Capabilities**: Web Speech API (`SpeechRecognition` & `SpeechSynthesis`)
+- **State & Database**: Reactive LocalStorage Storage Service with cross-tab custom event dispatchers
+
+---
+
+## 💻 Local Setup & Execution Guide
 
 ### Prerequisites
-- Node.js 18.0 or higher
-- npm 9.0 or higher
+- [Node.js](https://nodejs.org/) v18 or higher (tested on Node v24).
+- npm (Node Package Manager).
 
-### 1. Clone Repository & Install Dependencies
+### 1. Clone & Navigate to Project Directory
 ```bash
-git clone https://github.com/shivamsisodiya9568-cpu/readtriangle.git
-cd readtriangle
+cd "c:\Users\shiva\OneDrive\Documents\New folder"
+```
+
+### 2. Install Dependencies
+```bash
 npm install
 ```
 
-### 2. Run Local Development Server
+### 3. Start the Development Server
 ```bash
 npm run dev
 ```
-Open your browser at `http://localhost:5173`.
+The terminal will display:
+```
+  VITE v6.1.0  ready in 250 ms
 
-### 3. Build for Production
+  ➜  Local:   http://localhost:5173/
+  ➜  Network: use --host to expose
+```
+
+### 4. Build for Production
+To test production bundling and type checks:
 ```bash
 npm run build
 ```
 
 ---
 
-## 📄 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+## 🔐 Medical Safety & Academic Disclaimer
+> **IMPORTANT:** JIVAN SETU is an academic engineering capstone prototype designed to model data coordination between emergency actors. In any real-world life-threatening emergency in India, always dial **112** (All Emergencies) or **108** (Medical Ambulance) immediately.
+> 
+> The preliminary patient priority feature is an organizational aid and does not substitute for certified clinical triage, doctor examination, or approved institutional medical protocols.

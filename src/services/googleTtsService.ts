@@ -7,7 +7,7 @@ import { VoiceOption } from '../types/reader';
 
 // API key is loaded from environment variable — never hardcode secrets in source code!
 // Create a .env file in the project root with: VITE_GOOGLE_API_KEY=your_actual_key_here
-export const DEFAULT_GOOGLE_API_KEY = import.meta.env.VITE_GOOGLE_API_KEY ?? '';
+export const DEFAULT_GOOGLE_API_KEY = (import.meta as any).env?.VITE_GOOGLE_API_KEY ?? '';
 
 export const GOOGLE_NEURAL_ENGLISH_VOICES: VoiceOption[] = [
   {

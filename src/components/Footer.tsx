@@ -1,80 +1,158 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { ShieldCheck, Lock, Globe, Heart } from 'lucide-react';
+import { HeartPulse, PhoneCall, ShieldAlert, GraduationCap, Award, ExternalLink } from 'lucide-react';
+import { useJivanSetu } from '../context/JivanSetuContext';
+import { translations } from '../data/translations';
 
 export const Footer: React.FC = () => {
+  const { language } = useJivanSetu();
+  const t = translations[language];
+
   return (
-    <footer className="border-t border-slate-200 dark:border-slate-800 bg-white dark:bg-dark-bg text-slate-600 dark:text-slate-400 text-xs transition-colors">
+    <footer className="bg-navy-950 text-slate-300 border-t border-navy-800 text-sm">
+      {/* Top Banner: Medical & Legal Safety */}
+      <div className="bg-navy-900 border-b border-navy-800/60 px-4 py-4">
+        <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-3 text-xs">
+          <div className="flex items-center gap-2 text-amber-300">
+            <ShieldAlert className="w-4 h-4 shrink-0" />
+            <span className="font-semibold">
+              Official Indian Emergency Services: Dial 112 for All Emergencies | 108 for Medical Ambulance | 102 for Maternity / Infant Care
+            </span>
+          </div>
+          <div className="flex items-center gap-4 text-slate-400">
+            <span className="inline-flex items-center gap-1">
+              <GraduationCap className="w-3.5 h-3.5 text-blue-400" />
+              B.Tech Academic Capstone Project
+            </span>
+            <span>•</span>
+            <span className="text-emerald-400 font-medium">Prototype v2.0</span>
+          </div>
+        </div>
+      </div>
+
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="grid grid-cols-1 md:grid-cols-5 gap-8 mb-12">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           
-          {/* Col 1: Brand Info */}
-          <div className="md:col-span-2 space-y-4">
-            <div className="flex items-center gap-3">
-              <div className="w-8 h-8 rounded-lg bg-indigo-600 text-white flex items-center justify-center shadow-md">
-                <div className="w-0 h-0 border-l-[5px] border-l-transparent border-r-[5px] border-r-transparent border-b-[9px] border-b-white ml-0.5" />
+          {/* Brand & Vision */}
+          <div className="md:col-span-1 space-y-4">
+            <div className="flex items-center gap-2.5">
+              <div className="w-9 h-9 rounded-lg bg-emergency-600 flex items-center justify-center text-white shadow-md shadow-red-500/20">
+                <HeartPulse className="w-5 h-5" />
               </div>
-              <span className="font-extrabold text-base text-slate-900 dark:text-white tracking-tight">ReadTriangle</span>
+              <span className="text-xl font-extrabold text-white tracking-tight">
+                JIVAN <span className="text-emergency-500">SETU</span>
+              </span>
             </div>
-            <p className="text-sm font-medium text-slate-700 dark:text-slate-300">
-              "Turn Every Page Into a Voice."
+            <p className="text-xs text-slate-400 leading-relaxed">
+              "{t.brandTagline}"
             </p>
-            <p className="text-xs leading-relaxed max-w-sm text-slate-500 dark:text-slate-400">
-              ReadTriangle is a premium multilingual PDF reading platform that allows users to upload readable PDFs and listen to contents as natural, human-like synthetic speech.
+            <p className="text-xs text-slate-400 leading-relaxed">
+              A synchronized medical coordination platform connecting bystanders, paramedics, and hospital emergency trauma teams through real-time telemetry.
             </p>
-            <div className="flex items-center gap-4 text-slate-500 dark:text-slate-400 pt-2">
-              <span className="flex items-center gap-1 text-[11px]"><ShieldCheck className="w-3.5 h-3.5 text-emerald-500" /> Client-side Privacy</span>
-              <span className="flex items-center gap-1 text-[11px]"><Globe className="w-3.5 h-3.5 text-indigo-500" /> Multilingual Voices</span>
+            <div className="pt-2">
+              <a
+                href="tel:112"
+                className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-emergency-600/20 border border-emergency-500/40 text-emergency-400 font-bold text-xs hover:bg-emergency-600 hover:text-white transition"
+              >
+                <PhoneCall className="w-3.5 h-3.5" />
+                Emergency Hotline: 112
+              </a>
             </div>
           </div>
 
-          {/* Col 2: Core SEO Features */}
-          <div className="space-y-2.5">
-            <div className="font-bold text-slate-900 dark:text-white text-xs uppercase tracking-wider">Features</div>
-            <ul className="space-y-2">
-              <li><Link to="/pdf-to-audio" className="hover:text-indigo-600 dark:hover:text-white transition-colors">PDF to Audio</Link></li>
-              <li><Link to="/pdf-reader" className="hover:text-indigo-600 dark:hover:text-white transition-colors">PDF Reader</Link></li>
-              <li><Link to="/pdf-text-to-speech" className="hover:text-indigo-600 dark:hover:text-white transition-colors">Text to Speech PDF</Link></li>
-              <li><Link to="/pdf-voice-reader" className="hover:text-indigo-600 dark:hover:text-white transition-colors">PDF Voice Reader</Link></li>
-              <li><Link to="/ai-pdf-reader" className="hover:text-indigo-600 dark:hover:text-white transition-colors">AI PDF Reader</Link></li>
-              <li><Link to="/multilingual-pdf-reader" className="hover:text-indigo-600 dark:hover:text-white transition-colors">Multilingual Reader</Link></li>
-              <li><Link to="/pdf-audiobook" className="hover:text-indigo-600 dark:hover:text-white transition-colors">PDF Audiobook</Link></li>
+          {/* Quick Navigation */}
+          <div>
+            <h4 className="text-xs font-bold uppercase tracking-wider text-white mb-4">
+              Platform Features
+            </h4>
+            <ul className="space-y-2.5 text-xs text-slate-400">
+              <li>
+                <Link to="/report" className="hover:text-emergency-400 transition">
+                  Emergency Incident Reporting
+                </Link>
+              </li>
+              <li>
+                <Link to="/first-aid" className="hover:text-emerald-400 transition">
+                  Bilingual First-Aid Protocols
+                </Link>
+              </li>
+              <li>
+                <Link to="/ai-assistant" className="hover:text-amber-400 transition">
+                  AI Emergency Assistant (SBAR)
+                </Link>
+              </li>
+              <li>
+                <Link to="/routes" className="hover:text-blue-400 transition">
+                  OpenStreetMap Live Route Tracking
+                </Link>
+              </li>
+              <li>
+                <Link to="/demo" className="hover:text-purple-400 transition font-semibold text-amber-300">
+                  9-Step Evaluation Demo Walkthrough
+                </Link>
+              </li>
             </ul>
           </div>
 
-          {/* Col 3: Platform */}
-          <div className="space-y-2.5">
-            <div className="font-bold text-slate-900 dark:text-white text-xs uppercase tracking-wider">Platform</div>
-            <ul className="space-y-2">
-              <li><Link to="/app" className="hover:text-indigo-600 dark:hover:text-white transition-colors font-medium text-indigo-600 dark:text-indigo-400">Studio Reader</Link></li>
-              <li><Link to="/features" className="hover:text-indigo-600 dark:hover:text-white transition-colors">Features Overview</Link></li>
-              <li><Link to="/how-it-works" className="hover:text-indigo-600 dark:hover:text-white transition-colors">How It Works</Link></li>
-              <li><Link to="/faq" className="hover:text-indigo-600 dark:hover:text-white transition-colors">FAQ & Support</Link></li>
-              <li><Link to="/about" className="hover:text-indigo-600 dark:hover:text-white transition-colors">About Us</Link></li>
-              <li><Link to="/contact" className="hover:text-indigo-600 dark:hover:text-white transition-colors">Contact</Link></li>
+          {/* Emergency Stakeholder Portals */}
+          <div>
+            <h4 className="text-xs font-bold uppercase tracking-wider text-white mb-4">
+              Stakeholder Portals
+            </h4>
+            <ul className="space-y-2.5 text-xs text-slate-400">
+              <li>
+                <Link to="/ambulance" className="hover:text-white transition flex items-center gap-1.5">
+                  <span className="w-1.5 h-1.5 rounded-full bg-amber-400" />
+                  108 Ambulance EMS Dashboard
+                </Link>
+              </li>
+              <li>
+                <Link to="/hospital" className="hover:text-white transition flex items-center gap-1.5">
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
+                  Hospital ER Trauma Bay Console
+                </Link>
+              </li>
+              <li>
+                <Link to="/admin" className="hover:text-white transition flex items-center gap-1.5">
+                  <span className="w-1.5 h-1.5 rounded-full bg-purple-400" />
+                  Central Command & Dispatch Hub
+                </Link>
+              </li>
+              <li>
+                <span className="text-[11px] text-slate-400 block pt-1">
+                  Role-based access simulation allows seamless testing of all roles during examination.
+                </span>
+              </li>
             </ul>
           </div>
 
-          {/* Col 4: Legal & Policy */}
-          <div className="space-y-2.5">
-            <div className="font-bold text-slate-900 dark:text-white text-xs uppercase tracking-wider">Legal & Trust</div>
-            <ul className="space-y-2">
-              <li><Link to="/privacy-policy" className="hover:text-indigo-600 dark:hover:text-white transition-colors">Privacy Policy</Link></li>
-              <li><Link to="/terms-and-conditions" className="hover:text-indigo-600 dark:hover:text-white transition-colors">Terms & Conditions</Link></li>
-              <li><Link to="/copyright-policy" className="hover:text-indigo-600 dark:hover:text-white transition-colors">Copyright Policy</Link></li>
-              <li><Link to="/privacy-policy#cookies" className="hover:text-indigo-600 dark:hover:text-white transition-colors">Cookie Policy</Link></li>
-            </ul>
+          {/* Academic Project Credits & Safety Notice */}
+          <div>
+            <h4 className="text-xs font-bold uppercase tracking-wider text-white mb-4">
+              Academic & Safety Notice
+            </h4>
+            <div className="p-3 rounded-lg bg-navy-900 border border-navy-800 text-xs space-y-2 text-slate-400">
+              <p>
+                <strong>Academic Scope:</strong> Developed by Second-Year B.Tech Computer Science & Engineering student.
+              </p>
+              <p className="text-[11px] text-slate-400">
+                Data presented in this prototype is simulated for research, coordination modeling, and academic demonstration.
+              </p>
+            </div>
           </div>
-
         </div>
 
-        {/* Bottom Bar */}
-        <div className="pt-8 border-t border-slate-200 dark:border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-4 text-slate-500 dark:text-slate-400">
-          <p>© {new Date().getFullYear()} ReadTriangle. All rights reserved. Built for fast, private document listening.</p>
-          <div className="flex items-center gap-6">
-            <Link to="/sitemap.xml" target="_blank" className="hover:text-slate-900 dark:hover:text-white">Sitemap</Link>
-            <Link to="/privacy-policy" className="hover:text-slate-900 dark:hover:text-white">Privacy</Link>
-            <Link to="/terms-and-conditions" className="hover:text-slate-900 dark:hover:text-white">Terms</Link>
+        {/* Bottom Credits */}
+        <div className="mt-10 pt-6 border-t border-navy-900 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-400">
+          <div>
+            &copy; {new Date().getFullYear()} JIVAN SETU Emergency Coordination Platform. All rights reserved.
+          </div>
+          <div className="flex items-center gap-4 text-slate-400">
+            <span>Responsive Web Engineering</span>
+            <span>•</span>
+            <span>TypeScript + Tailwind + React</span>
+            <span>•</span>
+            <span>OpenStreetMap</span>
           </div>
         </div>
       </div>

@@ -1,207 +1,97 @@
 /**
- * SpeechService - Unified client-side Web Speech & Voice playback helper
- * Strictly English voices only.
+ * Speech Recognition (STT) and Speech Synthesis (TTS) Helper
+ * with bilingual support for English and Hindi.
  */
 
-export interface SpeechVoiceOption {
-  voice?: SpeechSynthesisVoice;
-  name: string;
-  lang: string;
-  isDefault: boolean;
-  isLocal: boolean;
-  provider?: 'neural' | 'browser';
+// Window speech recognition types
+interface IWindow extends Window {
+  webkitSpeechRecognition?: any;
+  SpeechRecognition?: any;
 }
 
-export type SpeechState = 'idle' | 'playing' | 'paused' | 'stopped';
+export type SpeechState = any;
+export type SpeechVoiceOption = any;
 
-export class SpeechService {
-  private synth: SpeechSynthesis | null = null;
-  private currentUtterance: SpeechSynthesisUtterance | null = null;
-  private voices: SpeechSynthesisVoice[] = [];
-  private selectedVoice: SpeechSynthesisVoice | null = null;
-  private rate: number = 1.0;
-  private pitch: number = 1.0;
-  private volume: number = 1.0;
-  private state: SpeechState = 'idle';
+export const SpeechService = {
+  isRecognitionSupported(): boolean {
+    if (typeof window === 'undefined') return false;
+    const win = window as IWindow;
+    return !!(win.SpeechRecognition || win.webkitSpeechRecognition);
+  },
 
-  // Callbacks
-  private onStateChangeCallback?: (state: SpeechState) => void;
-  private onBoundaryCallback?: (charIndex: number, charLength: number) => void;
-  private onEndCallback?: () => void;
-  private onErrorCallback?: (err: any) => void;
+  isSynthesisSupported(): boolean {
+    if (typeof window === 'undefined') return false;
+    return 'speechSynthesis' in window;
+  },
 
-  constructor() {
-    if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
-      this.synth = window.speechSynthesis;
-      this.initVoices();
-      if (this.synth.onvoiceschanged !== undefined) {
-        this.synth.onvoiceschanged = () => this.initVoices();
-      }
-    }
-  }
-
-  public isSupported(): boolean {
-    return this.synth !== null;
-  }
-
-  private initVoices() {
-    if (!this.synth) return;
-    const all = this.synth.getVoices();
-    // Filter STRICTLY to English voices only
-    this.voices = all.filter(v => v.lang.toLowerCase().startsWith('en'));
-
-    if (this.voices.length > 0 && !this.selectedVoice) {
-      const preferred =
-        this.voices.find((v) => v.name.includes('Natural') || v.name.includes('Google') || v.name.includes('Samantha') || v.name.includes('Jenny') || v.name.includes('David')) ||
-        this.voices[0];
-      this.selectedVoice = preferred || null;
-    }
-  }
-
-  public getVoices(): SpeechVoiceOption[] {
-    if (!this.synth) return [];
-    if (this.voices.length === 0) {
-      this.initVoices();
-    }
-    return this.voices.map((v) => ({
-      voice: v,
-      name: v.name,
-      lang: v.lang,
-      isDefault: v.default,
-      isLocal: v.localService,
-      provider: 'browser',
-    }));
-  }
-
-  public setVoice(voiceName: string) {
-    const v = this.voices.find((item) => item.name === voiceName);
-    if (v) {
-      this.selectedVoice = v;
-    }
-  }
-
-  public setRate(rate: number) {
-    this.rate = Math.max(0.5, Math.min(2.0, rate));
-  }
-
-  public setPitch(pitch: number) {
-    this.pitch = Math.max(0.5, Math.min(1.5, pitch));
-  }
-
-  public setVolume(volume: number) {
-    this.volume = Math.max(0, Math.min(1.0, volume));
-  }
-
-  public getState(): SpeechState {
-    return this.state;
-  }
-
-  public setCallbacks(callbacks: {
-    onStateChange?: (state: SpeechState) => void;
-    onBoundary?: (charIndex: number, charLength: number) => void;
-    onEnd?: () => void;
-    onError?: (err: any) => void;
-  }) {
-    this.onStateChangeCallback = callbacks.onStateChange;
-    this.onBoundaryCallback = callbacks.onBoundary;
-    this.onEndCallback = callbacks.onEnd;
-    this.onErrorCallback = callbacks.onError;
-  }
-
-  public speak(text: string, startIndex: number = 0) {
-    if (!this.synth) {
-      if (this.onErrorCallback) this.onErrorCallback('Speech synthesis is not supported on this device/browser');
-      return;
+  startDictation(
+    language: 'en' | 'hi',
+    onResult: (text: string) => void,
+    onError: (err: string) => void,
+    onEnd: () => void
+  ): { stop: () => void } | null {
+    if (!this.isRecognitionSupported()) {
+      onError('Speech recognition is not supported in this browser. Please use standard text input.');
+      return null;
     }
 
-    this.stop();
+    const win = window as IWindow;
+    const SpeechRec = win.SpeechRecognition || win.webkitSpeechRecognition;
+    const recognition = new SpeechRec();
 
-    const cleanText = text.substring(startIndex).trim();
-    if (!cleanText) {
-      this.updateState('idle');
-      if (this.onEndCallback) this.onEndCallback();
-      return;
-    }
+    recognition.continuous = false;
+    recognition.interimResults = false;
+    recognition.lang = language === 'hi' ? 'hi-IN' : 'en-IN';
 
-    const utterance = new SpeechSynthesisUtterance(cleanText);
-    if (this.selectedVoice) {
-      utterance.voice = this.selectedVoice;
-    }
-    utterance.rate = this.rate;
-    utterance.pitch = this.pitch;
-    utterance.volume = this.volume;
-
-    utterance.onstart = () => {
-      this.updateState('playing');
+    recognition.onresult = (event: any) => {
+      const transcript = event.results[0][0].transcript;
+      onResult(transcript);
     };
 
-    utterance.onpause = () => {
-      this.updateState('paused');
+    recognition.onerror = (event: any) => {
+      onError(`Voice input error: ${event.error || 'Check microphone permission'}`);
     };
 
-    utterance.onresume = () => {
-      this.updateState('playing');
+    recognition.onend = () => {
+      onEnd();
     };
 
-    utterance.onend = () => {
-      this.updateState('idle');
-      this.currentUtterance = null;
-      if (this.onEndCallback) {
-        this.onEndCallback();
-      }
-    };
-
-    utterance.onerror = (e) => {
-      if (e.error !== 'interrupted' && e.error !== 'canceled') {
-        console.error('Speech synthesis error:', e);
-        if (this.onErrorCallback) this.onErrorCallback(e);
-      }
-      this.updateState('idle');
-      this.currentUtterance = null;
-    };
-
-    utterance.onboundary = (event) => {
-      if (event.name === 'word' || event.name === 'sentence') {
-        const idx = (startIndex || 0) + event.charIndex;
-        const len = event.charLength || 6;
-        if (this.onBoundaryCallback) {
-          this.onBoundaryCallback(idx, len);
+    try {
+      recognition.start();
+      return {
+        stop: () => {
+          try {
+            recognition.stop();
+          } catch {
+            // ignore
+          }
         }
-      }
-    };
+      };
+    } catch (e: any) {
+      onError(e.message || 'Unable to access microphone.');
+      return null;
+    }
+  },
 
-    this.currentUtterance = utterance;
-    this.synth.speak(utterance);
-  }
+  speakText(text: string, language: 'en' | 'hi' = 'en'): void {
+    if (!this.isSynthesisSupported()) return;
 
-  public pause() {
-    if (this.synth && this.state === 'playing') {
-      this.synth.pause();
-      this.updateState('paused');
+    window.speechSynthesis.cancel(); // Stop any ongoing speech
+
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = language === 'hi' ? 'hi-IN' : 'en-IN';
+    utterance.rate = 0.95; // Slightly slower for clarity in emergencies
+    utterance.pitch = 1.0;
+
+    window.speechSynthesis.speak(utterance);
+  },
+
+  stopSpeaking(): void {
+    if (this.isSynthesisSupported()) {
+      window.speechSynthesis.cancel();
     }
   }
+};
 
-  public resume() {
-    if (this.synth && this.state === 'paused') {
-      this.synth.resume();
-      this.updateState('playing');
-    }
-  }
+export const speechService: any = SpeechService;
 
-  public stop() {
-    if (this.synth) {
-      this.synth.cancel();
-      this.currentUtterance = null;
-      this.updateState('stopped');
-    }
-  }
-
-  private updateState(newState: SpeechState) {
-    this.state = newState;
-    if (this.onStateChangeCallback) {
-      this.onStateChangeCallback(newState);
-    }
-  }
-}
-
-export const speechService = new SpeechService();

@@ -8,26 +8,43 @@ export default {
   theme: {
     extend: {
       colors: {
-        brand: {
-          50: '#f5f3ff',
-          100: '#ede9fe',
-          200: '#ddd6fe',
-          300: '#c4b5fd',
-          400: '#a78bfa',
-          500: '#8b5cf6',
-          600: '#7c3aed',
-          700: '#6d28d9',
-          800: '#5b21b6',
-          900: '#4c1d95',
-          950: '#2e1065',
+        navy: {
+          50: '#f0f4f9',
+          100: '#e1e9f2',
+          200: '#c3d3e6',
+          300: '#94b3d3',
+          400: '#5e8ebe',
+          500: '#3970a7',
+          600: '#29578b',
+          700: '#224671',
+          800: '#0f2744',
+          900: '#0a192f',
+          950: '#050c18',
+        },
+        emergency: {
+          50: '#fef2f2',
+          100: '#fee2e2',
+          200: '#fecaca',
+          300: '#fca5a5',
+          400: '#f87171',
+          500: '#ef4444',
+          600: '#dc2626',
+          700: '#b91c1c',
+          800: '#991b1b',
+          900: '#7f1d1d',
+        },
+        priority: {
+          red: '#ef4444',
+          yellow: '#f59e0b',
+          green: '#10b981',
         },
         dark: {
-          bg: '#090b10',
-          surface: '#0f141c',
-          card: '#141b26',
-          border: '#1f293d',
-          hover: '#1a2332',
-          muted: '#8b9bb4'
+          bg: '#070f1e',
+          surface: '#0c182b',
+          card: '#102138',
+          border: '#1a3356',
+          hover: '#162d4d',
+          muted: '#8ba0ba'
         }
       },
       fontFamily: {

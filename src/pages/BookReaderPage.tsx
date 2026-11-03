@@ -81,11 +81,11 @@ export const BookReaderPage: React.FC = () => {
 
   // Update speechService callbacks
   useEffect(() => {
-    speechService.setCallbacks({
-      onStateChange: (st) => setSpeechState(st),
+    speechService.setCallbacks?.({
+      onStateChange: (st: any) => setSpeechState(st),
       onEnd: () => {
         // When paragraph ends, auto-advance to next paragraph or next page!
-        setActiveParagraphIndex((prevIdx) => {
+        setActiveParagraphIndex((prevIdx: number) => {
           if (prevIdx < paragraphs.length - 1) {
             const nextIdx = prevIdx + 1;
             // Speak next paragraph
@@ -104,7 +104,7 @@ export const BookReaderPage: React.FC = () => {
           }
         });
       },
-      onError: (err) => {
+      onError: (err: any) => {
         console.warn('Speech error:', err);
       },
     });

@@ -1,6 +1,5 @@
-name = "readpages"
+name = "jivan-setu"
 compatibility_date = "2024-09-23"
-account_id = "4cb5215014cbf6ac2c36b5392626181f"
 
 [assets]
 directory = "./dist"
