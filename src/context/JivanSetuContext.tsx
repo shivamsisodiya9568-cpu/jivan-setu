@@ -3,6 +3,7 @@ import {
   Ambulance, 
   EmergencyReport, 
   EmergencyStatus, 
+  EmergencyType,
   Hospital, 
   LanguageCode, 
   UserRole 
@@ -29,11 +30,18 @@ interface JivanSetuContextType {
   setLanguage: (lang: LanguageCode) => void;
   setActiveReportId: (id: string) => void;
   submitReport: (input: TriageInput & {
-    reporterName: string;
-    reporterPhone: string;
+    reporterName?: string;
+    reporterPhone?: string;
     location: { lat: number; lng: number; address: string; landmark?: string };
     patientGender?: 'Male' | 'Female' | 'Other' | 'Unknown';
   }) => EmergencyReport;
+  submitQuickSos: (params: {
+    location: { lat: number; lng: number; address: string; landmark?: string };
+    emergencyType?: EmergencyType;
+    callerPhone?: string;
+    conditionSummary?: string;
+  }) => EmergencyReport;
+  updatePatientInfo: (id: string, updates: Partial<EmergencyReport>) => EmergencyReport | undefined;
   updateStatus: (
     id: string,
     status: EmergencyStatus,
@@ -117,8 +125,8 @@ export const JivanSetuProvider: React.FC<{ children: React.ReactNode }> = ({ chi
   };
 
   const submitReport = (input: TriageInput & {
-    reporterName: string;
-    reporterPhone: string;
+    reporterName?: string;
+    reporterPhone?: string;
     location: { lat: number; lng: number; address: string; landmark?: string };
     patientGender?: 'Male' | 'Female' | 'Other' | 'Unknown';
   }): EmergencyReport => {
@@ -132,12 +140,15 @@ export const JivanSetuProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     const assignedAmb = ambulances.find(a => a.status === 'Available') || ambulances[0];
     const assignedHosp = hospitals[0];
 
+    const safeReporterName = input.reporterName?.trim() || 'Anonymous Bystander';
+    const safeReporterPhone = input.reporterPhone?.trim() || 'Not provided';
+
     const newReport: EmergencyReport = {
       id: newId,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
-      reporterName: input.reporterName,
-      reporterPhone: input.reporterPhone,
+      reporterName: safeReporterName,
+      reporterPhone: safeReporterPhone,
       emergencyType: input.emergencyType,
       patientName: input.patientName,
       patientAge: input.patientAge,
@@ -146,8 +157,8 @@ export const JivanSetuProvider: React.FC<{ children: React.ReactNode }> = ({ chi
       consciousness: input.consciousness,
       breathing: input.breathing,
       severeBleeding: input.severeBleeding,
-      suspectedInjuries: input.suspectedInjuries,
-      additionalNotes: input.additionalNotes,
+      suspectedInjuries: input.suspectedInjuries || [],
+      additionalNotes: input.additionalNotes || '',
       location: input.location,
       priority: triage.priority,
       priorityScore: triage.priorityScore,
@@ -159,7 +170,7 @@ export const JivanSetuProvider: React.FC<{ children: React.ReactNode }> = ({ chi
         {
           status: 'Received',
           timestamp: new Date().toISOString(),
-          actor: `${input.reporterName} (Bystander)`,
+          actor: `${safeReporterName} (Public User)`,
           note: `Incident registered with priority ${triage.priority}. Emergency ID generated.`
         }
       ],
@@ -183,6 +194,35 @@ export const JivanSetuProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     );
 
     return newReport;
+  };
+
+  const submitQuickSos = (params: {
+    location: { lat: number; lng: number; address: string; landmark?: string };
+    emergencyType?: EmergencyType;
+    callerPhone?: string;
+    conditionSummary?: string;
+  }): EmergencyReport => {
+    return submitReport({
+      emergencyType: params.emergencyType || 'Other Acute Medical',
+      reporterName: 'Emergency SOS Requester',
+      reporterPhone: params.callerPhone || 'Not provided',
+      location: params.location,
+      consciousness: 'Alert & Responsive',
+      breathing: 'Gasping / Struggling',
+      severeBleeding: 'None',
+      suspectedInjuries: [],
+      victimCount: 1,
+      additionalNotes: params.conditionSummary || 'Immediate 1-Tap SOS ambulance booking triggered from Home Screen.'
+    });
+  };
+
+  const updatePatientInfo = (id: string, updates: Partial<EmergencyReport>): EmergencyReport | undefined => {
+    const updated = StorageService.updateReportPatientInfo(id, updates);
+    if (updated) {
+      refreshData();
+      addToast('success', 'Patient Vitals Synchronized', `Emergency record ${id} updated with clinical info.`);
+    }
+    return updated;
   };
 
   const updateStatus = (
@@ -225,6 +265,8 @@ export const JivanSetuProvider: React.FC<{ children: React.ReactNode }> = ({ chi
         setLanguage,
         setActiveReportId,
         submitReport,
+        submitQuickSos,
+        updatePatientInfo,
         updateStatus,
         acknowledgeHospitalPreAlert,
         resetAllData,

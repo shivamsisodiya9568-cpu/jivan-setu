@@ -1,5 +1,5 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import { 
   Activity, 
   AlertCircle, 
@@ -10,25 +10,89 @@ import {
   CheckCircle2, 
   Clock, 
   Compass, 
+  Copy,
   FileText, 
   Globe2, 
   HeartPulse, 
+  LifeBuoy,
+  LocateFixed,
+  MapPin,
   Mic, 
+  Navigation,
   PhoneCall, 
   Route, 
   ShieldAlert, 
   ShieldCheck, 
   Sparkles, 
   Stethoscope, 
-  Users 
+  Users,
+  X
 } from 'lucide-react';
 import { useJivanSetu } from '../context/JivanSetuContext';
 import { translations } from '../data/translations';
 import { PriorityBadge } from '../components/common/PriorityBadge';
+import { EmergencyReport, EmergencyType } from '../types/emergency';
 
 export const LandingPage: React.FC = () => {
-  const { language, reports } = useJivanSetu();
+  const navigate = useNavigate();
+  const { language, reports, submitQuickSos, addToast } = useJivanSetu();
   const t = translations[language];
+
+  // SOS Modal State
+  const [sosModalOpen, setSosModalOpen] = useState(false);
+  const [sosLocation, setSosLocation] = useState({
+    lat: 28.5630,
+    lng: 77.2085,
+    address: 'Near Safdarjung Flyover, Ring Road, New Delhi',
+    landmark: 'Safdarjung Bus Stand'
+  });
+  const [isLocating, setIsLocating] = useState(false);
+  const [sosEmergencyType, setSosEmergencyType] = useState<EmergencyType>('Road Accident');
+  const [sosCallerPhone, setSosCallerPhone] = useState('');
+  const [sosSuccess, setSosSuccess] = useState<EmergencyReport | null>(null);
+
+  const detectSosLocation = () => {
+    if (!navigator.geolocation) {
+      addToast('warning', 'Location Unavailable', 'Geolocation is not supported by your browser. Please type location.');
+      return;
+    }
+    setIsLocating(true);
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        setIsLocating(false);
+        const lat = pos.coords.latitude;
+        const lng = pos.coords.longitude;
+        setSosLocation({
+          lat,
+          lng,
+          address: `GPS: ${lat.toFixed(5)}, ${lng.toFixed(5)} (Detected via Device)`,
+          landmark: 'Auto-Detected GPS'
+        });
+        addToast('success', 'GPS Location Locked', 'Coordinates captured for dispatch.');
+      },
+      () => {
+        setIsLocating(false);
+        addToast('info', 'Manual Location', 'Please enter your street or landmark manually.');
+      },
+      { timeout: 8000 }
+    );
+  };
+
+  const handleSosSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    const rep = submitQuickSos({
+      location: sosLocation,
+      emergencyType: sosEmergencyType,
+      callerPhone: sosCallerPhone,
+      conditionSummary: `Emergency 1-Tap SOS ambulance booking for ${sosEmergencyType}.`
+    });
+    setSosSuccess(rep);
+  };
+
+  const copySuccessId = (id: string) => {
+    navigator.clipboard.writeText(id);
+    addToast('success', 'Incident ID Copied', `${id} copied to clipboard`);
+  };
 
   const criticalCount = reports.filter(r => r.priority === 'RED').length;
   const activeDispatches = reports.filter(r => r.status !== 'Completed' && r.status !== 'Rejected').length;
@@ -63,32 +127,147 @@ export const LandingPage: React.FC = () => {
                 {t.hero.subheading}
               </p>
 
-              {/* Action Buttons */}
-              <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4 pt-2">
+              {/* Primary Emergency Actions: SOS Button & Call 112 */}
+              <div className="space-y-4 pt-2">
+                <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-center lg:justify-start gap-4">
+                  
+                  {/* LARGE RED SOS BUTTON */}
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setSosSuccess(null);
+                      setSosModalOpen(true);
+                    }}
+                    className="relative group w-full sm:w-auto px-8 py-5 rounded-2xl bg-gradient-to-r from-red-600 via-emergency-600 to-red-700 hover:from-red-700 hover:to-emergency-700 text-white font-extrabold shadow-2xl shadow-red-600/50 hover:shadow-red-600/70 hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-3.5 border-2 border-red-400/40 cursor-pointer"
+                  >
+                    <span className="w-3.5 h-3.5 rounded-full bg-white animate-ping absolute left-5 hidden sm:inline-block" />
+                    <AlertOctagon className="w-7 h-7 text-white stroke-[2.5] animate-pulse shrink-0" />
+                    <div className="text-left">
+                      <span className="block text-base sm:text-lg font-black tracking-wider leading-tight">
+                        SOS – BOOK AMBULANCE
+                      </span>
+                      <span className="text-[11px] font-medium text-red-100 block opacity-95">
+                        Instant Emergency Booking • GPS Location
+                      </span>
+                    </div>
+                    <ArrowRight className="w-5 h-5 ml-1 group-hover:translate-x-1 transition-transform" />
+                  </button>
+
+                  {/* Immediate 112 Direct Dial Call Button */}
+                  <a
+                    href="tel:112"
+                    className="w-full sm:w-auto inline-flex items-center justify-center gap-2.5 px-6 py-5 rounded-2xl bg-red-100 dark:bg-red-950/60 border-2 border-red-300 dark:border-red-800 text-red-700 dark:text-red-300 font-extrabold text-sm sm:text-base hover:bg-red-200 dark:hover:bg-red-900/60 shadow-md transition-all active:scale-[0.98]"
+                  >
+                    <PhoneCall className="w-5 h-5 text-red-600 animate-bounce" />
+                    <span>DIAL 112 (OFFICIAL)</span>
+                  </a>
+
+                </div>
+
+                {/* Secondary Option: Detailed Report Form & Demo */}
+                <div className="flex flex-wrap items-center justify-center lg:justify-start gap-3 pt-1 text-xs">
+                  <Link
+                    to="/report"
+                    className="font-bold text-slate-600 dark:text-slate-300 hover:text-emergency-600 dark:hover:text-emergency-400 flex items-center gap-1 underline underline-offset-4"
+                  >
+                    <span>Detailed Emergency Triage Form</span>
+                    <ArrowRight className="w-3.5 h-3.5" />
+                  </Link>
+                  <span className="text-slate-300 dark:text-navy-700">•</span>
+                  <Link
+                    to="/demo"
+                    className="font-bold text-amber-600 dark:text-amber-400 hover:underline flex items-center gap-1"
+                  >
+                    <Sparkles className="w-3.5 h-3.5" />
+                    <span>Interactive 9-Step Evaluation Demo</span>
+                  </Link>
+                </div>
+              </div>
+
+              {/* THREE MAIN HOME SCREEN BUTTONS */}
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5 pt-4 text-left">
+                
+                {/* Button A: FIRST AID */}
                 <Link
-                  to="/report"
-                  className="w-full sm:w-auto inline-flex items-center justify-center gap-2.5 px-7 py-4 rounded-xl bg-emergency-600 hover:bg-emergency-700 text-white font-extrabold text-base shadow-xl shadow-red-500/30 hover:shadow-red-500/50 hover:-translate-y-0.5 active:translate-y-0 transition-all duration-200"
+                  to="/first-aid"
+                  className="p-4 rounded-2xl bg-white dark:bg-navy-900 border-2 border-slate-200 dark:border-navy-800 hover:border-emerald-500 dark:hover:border-emerald-500 shadow-sm hover:shadow-md transition-all group flex flex-col justify-between"
                 >
-                  <AlertOctagon className="w-5 h-5 animate-pulse" />
-                  <span>{t.hero.reportBtn}</span>
-                  <ArrowRight className="w-4 h-4" />
+                  <div className="space-y-2.5">
+                    <div className="w-10 h-10 rounded-xl bg-emerald-100 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 flex items-center justify-center group-hover:scale-110 transition-transform">
+                      <LifeBuoy className="w-5 h-5 stroke-[2.5]" />
+                    </div>
+                    <div>
+                      <span className="text-[10px] font-extrabold uppercase tracking-wider text-emerald-600 dark:text-emerald-400 block">
+                        Bilingual Guide
+                      </span>
+                      <h3 className="text-sm font-extrabold text-navy-950 dark:text-white">
+                        First Aid
+                      </h3>
+                      <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5 leading-relaxed">
+                        Step-by-step CPR, bleeding, burns & stroke instructions in Hindi & English.
+                      </p>
+                    </div>
+                  </div>
+                  <div className="pt-2.5 border-t border-slate-100 dark:border-navy-800 flex items-center justify-between text-xs font-bold text-emerald-600 dark:text-emerald-400 mt-3">
+                    <span>View Protocols</span>
+                    <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
+                  </div>
                 </Link>
 
-                <a
-                  href="#how-it-works"
-                  className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-4 rounded-xl border border-slate-300 dark:border-navy-700 bg-white dark:bg-navy-900/90 hover:bg-slate-50 dark:hover:bg-navy-800 text-navy-900 dark:text-white font-semibold text-sm shadow-sm transition-all"
-                >
-                  <Compass className="w-4 h-4 text-blue-500" />
-                  <span>{t.hero.exploreBtn}</span>
-                </a>
-
+                {/* Button B: PATIENT INFORMATION */}
                 <Link
-                  to="/demo"
-                  className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 py-4 rounded-xl border border-amber-300 dark:border-amber-700 bg-amber-50 dark:bg-amber-950/40 text-amber-800 dark:text-amber-300 font-bold text-xs uppercase tracking-wider hover:bg-amber-100 dark:hover:bg-amber-900/40 transition shadow-sm"
+                  to="/patient-info"
+                  className="p-4 rounded-2xl bg-white dark:bg-navy-900 border-2 border-slate-200 dark:border-navy-800 hover:border-blue-500 dark:hover:border-blue-500 shadow-sm hover:shadow-md transition-all group flex flex-col justify-between"
                 >
-                  <Sparkles className="w-4 h-4 text-amber-500" />
-                  <span>Interactive 9-Step Demo</span>
+                  <div className="space-y-2.5">
+                    <div className="w-10 h-10 rounded-xl bg-blue-100 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 flex items-center justify-center group-hover:scale-110 transition-transform">
+                      <Stethoscope className="w-5 h-5 stroke-[2.5]" />
+                    </div>
+                    <div>
+                      <span className="text-[10px] font-extrabold uppercase tracking-wider text-blue-600 dark:text-blue-400 block">
+                        Clinical Telemetry
+                      </span>
+                      <h3 className="text-sm font-extrabold text-navy-950 dark:text-white">
+                        Patient Information
+                      </h3>
+                      <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5 leading-relaxed">
+                        Submit vitals, breathing, bleeding & injuries directly to the ambulance crew.
+                      </p>
+                    </div>
+                  </div>
+                  <div className="pt-2.5 border-t border-slate-100 dark:border-navy-800 flex items-center justify-between text-xs font-bold text-blue-600 dark:text-blue-400 mt-3">
+                    <span>Add Patient Info</span>
+                    <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
+                  </div>
                 </Link>
+
+                {/* Button C: TRACK AMBULANCE */}
+                <Link
+                  to="/track"
+                  className="p-4 rounded-2xl bg-white dark:bg-navy-900 border-2 border-slate-200 dark:border-navy-800 hover:border-amber-500 dark:hover:border-amber-500 shadow-sm hover:shadow-md transition-all group flex flex-col justify-between"
+                >
+                  <div className="space-y-2.5">
+                    <div className="w-10 h-10 rounded-xl bg-amber-100 dark:bg-amber-950/60 text-amber-600 dark:text-amber-400 flex items-center justify-center group-hover:scale-110 transition-transform">
+                      <Navigation className="w-5 h-5 stroke-[2.5]" />
+                    </div>
+                    <div>
+                      <span className="text-[10px] font-extrabold uppercase tracking-wider text-amber-600 dark:text-amber-400 block">
+                        Live Tracking
+                      </span>
+                      <h3 className="text-sm font-extrabold text-navy-950 dark:text-white">
+                        Track Ambulance
+                      </h3>
+                      <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5 leading-relaxed">
+                        Enter request ID to view map route, dispatch lifecycle stage & estimated arrival.
+                      </p>
+                    </div>
+                  </div>
+                  <div className="pt-2.5 border-t border-slate-100 dark:border-navy-800 flex items-center justify-between text-xs font-bold text-amber-600 dark:text-amber-400 mt-3">
+                    <span>Track Unit</span>
+                    <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
+                  </div>
+                </Link>
+
               </div>
 
               {/* Live Status Ticker */}
@@ -601,6 +780,218 @@ export const LandingPage: React.FC = () => {
           </div>
         </div>
       </section>
+
+      {/* 7. QUICK SOS BOOKING MODAL & FLOW */}
+      {sosModalOpen && (
+        <div className="fixed inset-0 z-50 bg-navy-950/80 backdrop-blur-md flex items-center justify-center p-4 overflow-y-auto">
+          <div className="w-full max-w-lg bg-white dark:bg-navy-900 rounded-3xl border border-slate-200 dark:border-navy-700 shadow-2xl p-6 sm:p-8 space-y-5 my-8 max-h-[90vh] overflow-y-auto">
+            
+            {/* Top 112 Direct Access Banner (Never Delayed) */}
+            <div className="p-3.5 rounded-2xl bg-gradient-to-r from-red-600 to-red-700 text-white flex items-center justify-between gap-3 shadow-md">
+              <div className="flex items-center gap-2 text-xs">
+                <PhoneCall className="w-4 h-4 animate-bounce shrink-0" />
+                <span className="font-bold">Need instant voice dispatch?</span>
+              </div>
+              <a
+                href="tel:112"
+                className="px-3.5 py-1.5 rounded-xl bg-white text-red-700 font-black text-xs uppercase tracking-wider shrink-0 hover:bg-red-50 shadow"
+              >
+                Call 112 Now
+              </a>
+            </div>
+
+            {/* Modal Header */}
+            <div className="flex items-start justify-between">
+              <div>
+                <span className="text-[10px] font-extrabold uppercase tracking-wider px-2 py-0.5 rounded bg-red-100 dark:bg-red-950/60 text-red-700 dark:text-red-300">
+                  Priority Emergency Booking
+                </span>
+                <h3 className="text-xl sm:text-2xl font-black text-navy-950 dark:text-white mt-1">
+                  SOS – Book Ambulance
+                </h3>
+              </div>
+              <button
+                type="button"
+                onClick={() => setSosModalOpen(false)}
+                className="p-2 rounded-xl text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-navy-800 transition"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            {/* Demo Simulation Notice (Safety Transparency) */}
+            <div className="p-3.5 rounded-2xl bg-amber-50 dark:bg-amber-950/40 border border-amber-300 dark:border-amber-800/60 text-xs text-amber-900 dark:text-amber-200 flex items-start gap-2.5">
+              <AlertCircle className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
+              <p className="leading-relaxed">
+                <strong>Academic Prototype Demo:</strong> This booking triggers a functional simulation in the JIVAN SETU database and alerts the demo ambulance console. No real emergency vehicle is dispatched. Always call 112 for real emergencies.
+              </p>
+            </div>
+
+            {sosSuccess ? (
+              /* Booking Confirmation Screen */
+              <div className="space-y-5 pt-2">
+                <div className="p-5 rounded-2xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-300 dark:border-emerald-700/80 text-center space-y-2">
+                  <div className="w-12 h-12 rounded-full bg-emerald-600 text-white flex items-center justify-center mx-auto shadow-md">
+                    <CheckCircle2 className="w-7 h-7" />
+                  </div>
+                  <h4 className="text-lg font-black text-emerald-900 dark:text-emerald-200">
+                    Emergency Request Dispatched!
+                  </h4>
+                  <p className="text-xs text-emerald-700 dark:text-emerald-300">
+                    Broadcasted to 108 Ambulance Fleet and AIIMS Apex Trauma Emergency Center.
+                  </p>
+                  
+                  {/* Generated Unique ID */}
+                  <div className="pt-2">
+                    <span className="text-[10px] uppercase font-bold text-slate-400 block">Unique Request ID</span>
+                    <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-white dark:bg-navy-900 border border-emerald-300 dark:border-emerald-700 font-mono text-sm font-black text-slate-900 dark:text-white mt-1">
+                      <span>{sosSuccess.id}</span>
+                      <button
+                        type="button"
+                        onClick={() => copySuccessId(sosSuccess.id)}
+                        title="Copy ID"
+                        className="text-slate-400 hover:text-slate-600"
+                      >
+                        <Copy className="w-3.5 h-3.5" />
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Dispatch Details Card */}
+                <div className="grid grid-cols-2 gap-3 text-xs p-4 rounded-2xl bg-slate-50 dark:bg-navy-950 border border-slate-200 dark:border-navy-800">
+                  <div>
+                    <span className="text-[10px] uppercase font-bold text-slate-400 block">Assigned Unit</span>
+                    <strong className="text-slate-900 dark:text-white block mt-0.5">Eagle-1 ALS (108 Fleet)</strong>
+                  </div>
+                  <div>
+                    <span className="text-[10px] uppercase font-bold text-slate-400 block">Simulated ETA</span>
+                    <strong className="text-emergency-600 font-mono block mt-0.5">~4 Minutes (Demo)</strong>
+                  </div>
+                  <div className="col-span-2 pt-1 border-t border-slate-200 dark:border-navy-800">
+                    <span className="text-[10px] uppercase font-bold text-slate-400 block">Scene Location</span>
+                    <span className="text-slate-700 dark:text-slate-300 block text-[11px] mt-0.5">{sosSuccess.location.address}</span>
+                  </div>
+                </div>
+
+                {/* Action Navigation */}
+                <div className="space-y-2.5 pt-2">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setSosModalOpen(false);
+                      navigate(`/track?id=${sosSuccess.id}`);
+                    }}
+                    className="w-full py-3.5 rounded-xl bg-emergency-600 hover:bg-emergency-700 text-white font-extrabold text-xs uppercase tracking-wider shadow-lg shadow-red-500/20 transition flex items-center justify-center gap-2"
+                  >
+                    <Navigation className="w-4 h-4" />
+                    <span>Track Ambulance Live</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setSosModalOpen(false);
+                      navigate(`/patient-info?id=${sosSuccess.id}`);
+                    }}
+                    className="w-full py-3 rounded-xl border border-slate-300 dark:border-navy-700 bg-white dark:bg-navy-900 hover:bg-slate-50 text-slate-800 dark:text-slate-200 font-bold text-xs transition flex items-center justify-center gap-2"
+                  >
+                    <Stethoscope className="w-4 h-4 text-blue-500" />
+                    <span>Add Patient Medical Information</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => setSosModalOpen(false)}
+                    className="w-full py-2.5 text-center text-xs text-slate-500 hover:text-slate-700 dark:hover:text-slate-300 font-semibold"
+                  >
+                    Close Window
+                  </button>
+                </div>
+              </div>
+            ) : (
+              /* Emergency SOS Input Form */
+              <form onSubmit={handleSosSubmit} className="space-y-4">
+                
+                {/* 1. Location Detection & Entry */}
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between">
+                    <label className="block text-xs font-bold text-navy-950 dark:text-white flex items-center gap-1.5">
+                      <MapPin className="w-3.5 h-3.5 text-red-500" />
+                      <span>Incident Location</span> <span className="text-red-500">*</span>
+                    </label>
+
+                    <button
+                      type="button"
+                      onClick={detectSosLocation}
+                      disabled={isLocating}
+                      className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-blue-50 dark:bg-blue-950/50 text-blue-700 dark:text-blue-300 text-[11px] font-bold border border-blue-200 dark:border-blue-800 hover:bg-blue-100 transition disabled:opacity-50"
+                    >
+                      <LocateFixed className={`w-3 h-3 ${isLocating ? 'animate-spin' : ''}`} />
+                      <span>{isLocating ? 'Detecting GPS...' : 'Auto-Detect GPS'}</span>
+                    </button>
+                  </div>
+
+                  <input
+                    type="text"
+                    required
+                    value={sosLocation.address}
+                    onChange={(e) => setSosLocation(prev => ({ ...prev, address: e.target.value }))}
+                    placeholder="Enter street, road, or landmark..."
+                    className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 dark:border-navy-700 text-sm bg-slate-50 dark:bg-navy-950 text-slate-900 dark:text-white focus:ring-2 focus:ring-emergency-500 focus:outline-none"
+                  />
+                </div>
+
+                {/* 2. Emergency Type Selector */}
+                <div className="space-y-1.5">
+                  <label className="block text-xs font-bold text-navy-950 dark:text-white">
+                    Emergency Nature
+                  </label>
+                  <select
+                    value={sosEmergencyType}
+                    onChange={(e) => setSosEmergencyType(e.target.value as EmergencyType)}
+                    className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 dark:border-navy-700 text-sm bg-slate-50 dark:bg-navy-950 text-slate-900 dark:text-white focus:ring-2 focus:ring-emergency-500 focus:outline-none"
+                  >
+                    <option value="Road Accident">Road Traffic Accident (RTA)</option>
+                    <option value="Cardiac Arrest / Chest Pain">Cardiac Arrest / Severe Chest Pain</option>
+                    <option value="Severe Trauma & Bleeding">Severe Trauma & Bleeding</option>
+                    <option value="Respiratory Distress / Choking">Choking / Respiratory Failure</option>
+                    <option value="Stroke / Neurological">Stroke / Paralysis / Seizure</option>
+                    <option value="Severe Burn">Severe Burn Injury</option>
+                    <option value="Fall / Fracture">Serious Fracture / Fall</option>
+                    <option value="Other Acute Medical">Other Acute Medical Crisis</option>
+                  </select>
+                </div>
+
+                {/* 3. Optional Caller Phone */}
+                <div className="space-y-1.5">
+                  <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 flex items-center justify-between">
+                    <span>Contact Phone for Callback</span>
+                    <span className="text-[11px] text-slate-400 font-normal">(Optional)</span>
+                  </label>
+                  <input
+                    type="tel"
+                    value={sosCallerPhone}
+                    onChange={(e) => setSosCallerPhone(e.target.value)}
+                    placeholder="e.g. +91 98765 43210 (or leave blank)"
+                    className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 dark:border-navy-700 text-sm bg-slate-50 dark:bg-navy-950 text-slate-900 dark:text-white focus:ring-2 focus:ring-emergency-500 focus:outline-none"
+                  />
+                </div>
+
+                {/* Submit SOS Button */}
+                <button
+                  type="submit"
+                  className="w-full py-4 rounded-2xl bg-gradient-to-r from-red-600 via-emergency-600 to-red-700 hover:from-red-700 hover:to-emergency-700 text-white font-black text-sm uppercase tracking-wider shadow-xl shadow-red-600/30 hover:scale-[1.01] active:scale-[0.99] transition flex items-center justify-center gap-2 cursor-pointer"
+                >
+                  <AlertOctagon className="w-5 h-5 animate-pulse" />
+                  <span>CONFIRM SOS DISPATCH</span>
+                </button>
+              </form>
+            )}
+
+          </div>
+        </div>
+      )}
 
     </div>
   );

@@ -10,6 +10,8 @@ import { ToastContainer } from './components/common/ToastContainer';
 import { LandingPage } from './pages/LandingPage';
 import { EmergencyReportPage } from './pages/EmergencyReportPage';
 import { EmergencyStatusPage } from './pages/EmergencyStatusPage';
+import { TrackAmbulancePage } from './pages/TrackAmbulancePage';
+import { PatientInfoPage } from './pages/PatientInfoPage';
 import { AmbulanceDashboardPage } from './pages/AmbulanceDashboardPage';
 import { HospitalDashboardPage } from './pages/HospitalDashboardPage';
 import { AdminDashboardPage } from './pages/AdminDashboardPage';
@@ -17,6 +19,7 @@ import { FirstAidGuidancePage } from './pages/FirstAidGuidancePage';
 import { AiAssistantPage } from './pages/AiAssistantPage';
 import { RouteOptimizationPage } from './pages/RouteOptimizationPage';
 import { DemoWorkflowPage } from './pages/DemoWorkflowPage';
+import { StaffAuthGuard } from './components/common/StaffAuthGuard';
 
 export function App() {
   return (
@@ -35,23 +38,42 @@ export function App() {
           {/* Core Routes */}
           <main className="flex-1">
             <Routes>
-              {/* Public Landing & Incident Report */}
+              {/* Public Immediate Emergency Access (No Registration Required) */}
               <Route path="/" element={<LandingPage />} />
               <Route path="/report" element={<EmergencyReportPage />} />
               <Route path="/status/:id" element={<EmergencyStatusPage />} />
-
-              {/* Stakeholder Dashboards */}
-              <Route path="/ambulance" element={<AmbulanceDashboardPage />} />
-              <Route path="/hospital" element={<HospitalDashboardPage />} />
-              <Route path="/admin" element={<AdminDashboardPage />} />
-
-              {/* Clinical Tools & Intelligence */}
+              <Route path="/track" element={<TrackAmbulancePage />} />
+              <Route path="/patient-info" element={<PatientInfoPage />} />
               <Route path="/first-aid" element={<FirstAidGuidancePage />} />
               <Route path="/ai-assistant" element={<AiAssistantPage />} />
               <Route path="/routes" element={<RouteOptimizationPage />} />
-
-              {/* Guided B.Tech Evaluation Demo Wizard */}
               <Route path="/demo" element={<DemoWorkflowPage />} />
+
+              {/* Authenticated Stakeholder Dashboards */}
+              <Route 
+                path="/ambulance" 
+                element={
+                  <StaffAuthGuard requiredRole="ambulance">
+                    <AmbulanceDashboardPage />
+                  </StaffAuthGuard>
+                } 
+              />
+              <Route 
+                path="/hospital" 
+                element={
+                  <StaffAuthGuard requiredRole="hospital">
+                    <HospitalDashboardPage />
+                  </StaffAuthGuard>
+                } 
+              />
+              <Route 
+                path="/admin" 
+                element={
+                  <StaffAuthGuard requiredRole="admin">
+                    <AdminDashboardPage />
+                  </StaffAuthGuard>
+                } 
+              />
 
               {/* Fallback to Home */}
               <Route path="*" element={<LandingPage />} />

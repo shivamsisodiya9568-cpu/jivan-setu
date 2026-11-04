@@ -72,6 +72,16 @@ export const Footer: React.FC = () => {
                 </Link>
               </li>
               <li>
+                <Link to="/track" className="hover:text-amber-400 transition font-semibold text-amber-200">
+                  Track Ambulance Live
+                </Link>
+              </li>
+              <li>
+                <Link to="/patient-info" className="hover:text-blue-400 transition">
+                  Patient Medical Information
+                </Link>
+              </li>
+              <li>
                 <Link to="/first-aid" className="hover:text-emerald-400 transition">
                   Bilingual First-Aid Protocols
                 </Link>

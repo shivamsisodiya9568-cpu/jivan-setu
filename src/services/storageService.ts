@@ -394,6 +394,36 @@ export const StorageService = {
     return updated;
   },
 
+  updateReportPatientInfo(
+    id: string,
+    updates: Partial<EmergencyReport>
+  ): EmergencyReport | undefined {
+    const list = this.getReports();
+    const index = list.findIndex(r => r.id === id);
+    if (index < 0) return undefined;
+
+    const current = list[index];
+    const updated: EmergencyReport = {
+      ...current,
+      ...updates,
+      updatedAt: new Date().toISOString(),
+      statusHistory: [
+        ...(current.statusHistory || []),
+        {
+          status: current.status,
+          timestamp: new Date().toISOString(),
+          actor: 'Emergency Responder / Bystander',
+          note: 'Patient clinical information updated and synchronized.'
+        }
+      ]
+    };
+
+    list[index] = updated;
+    localStorage.setItem(STORAGE_KEYS.REPORTS, JSON.stringify(list));
+    notifyChange();
+    return updated;
+  },
+
   getActiveReportId(): string | null {
     if (typeof window === 'undefined') return null;
     return localStorage.getItem(STORAGE_KEYS.ACTIVE_REPORT_ID);

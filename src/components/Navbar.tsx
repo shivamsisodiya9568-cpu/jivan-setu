@@ -11,9 +11,11 @@ import {
   HeartPulse, 
   LifeBuoy, 
   Menu, 
+  Navigation,
   PhoneCall, 
   ShieldCheck, 
   Sparkles, 
+  Stethoscope,
   Users, 
   X 
 } from 'lucide-react';
@@ -85,6 +87,30 @@ export const Navbar: React.FC = () => {
             >
               <LifeBuoy className="w-4 h-4 text-emerald-500" />
               {t.nav.firstAid}
+            </Link>
+
+            <Link
+              to="/patient-info"
+              className={`px-3 py-2 rounded-lg transition-colors flex items-center gap-1.5 ${
+                location.pathname === '/patient-info'
+                  ? 'text-emergency-600 dark:text-emergency-400 font-semibold bg-red-50 dark:bg-red-950/30'
+                  : 'hover:text-emergency-600 hover:bg-slate-100 dark:hover:bg-navy-900'
+              }`}
+            >
+              <Stethoscope className="w-4 h-4 text-blue-500" />
+              Patient Info
+            </Link>
+
+            <Link
+              to="/track"
+              className={`px-3 py-2 rounded-lg transition-colors flex items-center gap-1.5 ${
+                location.pathname === '/track'
+                  ? 'text-emergency-600 dark:text-emergency-400 font-semibold bg-red-50 dark:bg-red-950/30'
+                  : 'hover:text-emergency-600 hover:bg-slate-100 dark:hover:bg-navy-900'
+              }`}
+            >
+              <Navigation className="w-4 h-4 text-amber-500" />
+              Track Ambulance
             </Link>
 
             <Link
@@ -257,6 +283,22 @@ export const Navbar: React.FC = () => {
             >
               <LifeBuoy className="w-4 h-4 text-emerald-500" />
               {t.nav.firstAid}
+            </Link>
+            <Link
+              to="/patient-info"
+              onClick={() => setMobileMenuOpen(false)}
+              className="px-3 py-2 rounded-lg text-sm font-medium hover:bg-slate-100 dark:hover:bg-navy-900 text-slate-800 dark:text-slate-200 flex items-center gap-1.5"
+            >
+              <Stethoscope className="w-4 h-4 text-blue-500" />
+              Patient Info
+            </Link>
+            <Link
+              to="/track"
+              onClick={() => setMobileMenuOpen(false)}
+              className="px-3 py-2 rounded-lg text-sm font-medium hover:bg-slate-100 dark:hover:bg-navy-900 text-slate-800 dark:text-slate-200 flex items-center gap-1.5"
+            >
+              <Navigation className="w-4 h-4 text-amber-500" />
+              Track Ambulance
             </Link>
             <Link
               to="/ai-assistant"
